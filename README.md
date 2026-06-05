@@ -1,21 +1,35 @@
-This package contains a small HTTP-based library for working with the server provided by
-the [PPRL service](https://github.com/ul-mds/pprl-service).
+[![PyPI](https://img.shields.io/pypi/v/fable-client?cacheSeconds=0)](https://pypi.org/project/fable-client/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/fable-client?cacheSeconds=0)](https://pypi.org/project/fable-client/)
+![Code Coverage](https://img.shields.io/badge/Coverage-92%25-green.svg)
+[![License](https://img.shields.io/pypi/l/fable-client?cacheSeconds=0)](https://pypi.org/project/fable-client/)
+
+# FABLE Client
+
+This package contains a HTTP-based client for working with the server provided by
+the [PPRL service](https://github.com/ul-mds/fable-pprl-service) which is part of the FABLE
+(**F**ederated **A**nonymized **B**loom filter **L**inkage **E**ngine) ecosystem.
 It also contains a command-line application which uses the library to process CSV files.
+
+## Installation
+
+```bash
+pip install fable-client
+```
 
 Weight estimation requires additional packages which are not shipped by default.
 To add them, install this package using the following command.
 
 ```bash
-pip install fable_client[faker]
+pip install fable-client[faker]
 ```
 
-# Library methods
+## Library methods
 
 The library exposes functions for entity pre-processing, masking and bit vector matching.
-They follow the data model that is also used by the PPRL service, which is exposed through
-the [PPRL model package](https://github.com/ul-mds/pprl-model).
+They follow the data model that is also used by the FABLE PPRL service, which is exposed through
+the [FABLE model package](https://github.com/ul-mds/fable-model).
 
-## Entity transformation
+### Entity transformation
 
 ```python
 import fable_client
@@ -42,7 +56,7 @@ print(response.entities)
 # => [AttributeValueEntity(id='001', attributes={'first_name': 'muller', 'last_name': 'ludenscheidt'})]
 ```
 
-## Entity masking
+### Entity masking
 
 ```python
 import fable_client
@@ -76,7 +90,7 @@ print(response.entities)
 # => [BitVectorEntity(id='001', value='SKkgqBHBCJJCANICEKSpWMAUBYCQEMLuZgEQGBKRC8A=')]
 ```
 
-## Bit vector matching
+### Bit vector matching
 
 ```python
 import fable_client
@@ -99,7 +113,7 @@ print(response.matches)
 # => [Match(domain=BitVectorEntity(id='001', value='SKkgqBHBCJJCANICEKSpWMAUBYCQEMLuZgEQGBKRC8A='), range=BitVectorEntity(id='100', value='UKkgqBHBDJJCANICELSpWMAUBYCMEMLrZgEQGBKRC7A='), similarity=0.8536585365853658)]
 ```
 
-## Attribute weight estimation
+### Attribute weight estimation
 
 ```python
 import fable_client
@@ -130,9 +144,9 @@ print(stats)
 # => {'given_name': {'average_tokens': 5.0, 'ngram_entropy': 2.9219280948873623}, 'last_name': {'average_tokens': 11.0, 'ngram_entropy': 3.913977073182751}, 'gender': {'average_tokens': 2.0, 'ngram_entropy': 2.0}}
 ```
 
-# Command line interface
+## Command line interface
 
-The `fable` command exposes all the library's functions and adapts them to work with CSV files. 
+The `fable` command exposes all the library's functions and adapts them to work with CSV files.
 Running `fable --help` provides an overview of the command options.
 
 ```
@@ -305,7 +319,7 @@ id,value
 
 Matching is done with the `fable match` command.
 It allows the matching of multiple bit vector input files at once.
-If more than two files are provided, the command will pick out pairs of files and matches their contents against one 
+If more than two files are provided, the command will pick out pairs of files and matches their contents against one
 another.
 
 In this example, the bit vectors of two files are matched against each other.
@@ -356,7 +370,7 @@ domain_id,domain_file,range_id,range_file,similarity
 001,domain.csv,104,range.csv,0.9690721649484536
 ```
 
-Weight estimation is done with the `pprl estimate` command.
+Weight estimation is done with the `fable estimate` command.
 It generates random data based off of user specification and computes estimates for attribute weights.
 Data can be generated using [Faker](https://faker.readthedocs.io/).
 
@@ -419,6 +433,6 @@ $ fable estimate faker faker.json faker-output.json
 ]
 ```
 
-# License
+## License
 
 MIT.
