@@ -3,7 +3,7 @@ import csv
 import itertools
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, TypeVar
 
 import click
 import httpx
@@ -21,7 +21,6 @@ from fable_model import (
     WeightedAttributeConfig,
 )
 from pydantic import BaseModel
-from typing_extensions import TypeVar
 
 from ._client import FableClient
 from ._estimate import compute_attribute_stats

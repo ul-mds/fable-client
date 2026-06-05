@@ -1,4 +1,5 @@
 from json import JSONDecodeError
+from typing import TypeVar
 
 import httpx
 from fable_model import (
@@ -10,7 +11,6 @@ from fable_model import (
     EntityMaskResponse,
 )
 from pydantic import BaseModel, ValidationError
-from typing_extensions import TypeVar
 
 _MI = TypeVar("_MI", bound=BaseModel)
 _MO = TypeVar("_MO", bound=BaseModel)
