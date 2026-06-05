@@ -19,7 +19,7 @@ the [PPRL model package](https://github.com/ul-mds/pprl-model).
 
 ```python
 import fable_client
-from pprl_model import (
+from fable_model import (
     EntityTransformRequest,
     TransformConfig,
     EmptyValueHandling,
@@ -46,7 +46,7 @@ print(response.entities)
 
 ```python
 import fable_client
-from pprl_model import (
+from fable_model import (
     EntityMaskRequest,
     MaskConfig,
     HashConfig,
@@ -80,7 +80,7 @@ print(response.entities)
 
 ```python
 import fable_client
-from pprl_model import VectorMatchRequest, MatchConfig, SimilarityMeasure, BitVectorEntity
+from fable_model import VectorMatchRequest, MatchConfig, SimilarityMeasure, BitVectorEntity
 
 client = fable_client.FableClient(base_url="http://localhost:8080")
 
@@ -103,7 +103,7 @@ print(response.matches)
 
 ```python
 import fable_client
-from pprl_model import (
+from fable_model import (
     AttributeValueEntity,
     BaseTransformRequest,
     TransformConfig,

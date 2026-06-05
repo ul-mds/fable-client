@@ -1,7 +1,7 @@
 from json import JSONDecodeError
 
 import httpx
-from pprl_model import (
+from fable_model import (
     VectorMatchRequest,
     VectorMatchResponse,
     EntityTransformRequest,

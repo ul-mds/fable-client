@@ -8,7 +8,7 @@ from typing import Callable
 import pytest
 from click.testing import CliRunner
 from faker import Faker
-from pprl_model import (
+from fable_model import (
     BaseMatchRequest,
     MatchConfig,
     SimilarityMeasure,

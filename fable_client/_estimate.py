@@ -12,8 +12,8 @@ import math
 from collections import defaultdict, Counter
 from typing import TypedDict
 
-import pprl_core
-from pprl_model import AttributeValueEntity, BaseTransformRequest
+import fable_core
+from fable_model import AttributeValueEntity, BaseTransformRequest
 
 from ._client import FableClient
 
@@ -35,7 +35,7 @@ def split_into_wordlist(entities: list[AttributeValueEntity]) -> dict[str, list[
 
 
 def tokenize_wordlist(wordlist: list[str], token_size=2, padding="_") -> list[set[str]]:
-    return [pprl_core.common.tokenize(word, q=token_size, padding=padding) for word in wordlist]
+    return [fable_core.common.tokenize(word, q=token_size, padding=padding) for word in wordlist]
 
 
 def compute_average_tokens_for_token_list(token_list: list[set[str]]) -> float:

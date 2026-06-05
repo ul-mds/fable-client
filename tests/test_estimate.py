@@ -1,5 +1,5 @@
 import pytest
-from pprl_model import (
+from fable_model import (
     BaseTransformRequest,
     TransformConfig,
     EmptyValueHandling,

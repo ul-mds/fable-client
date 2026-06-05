@@ -7,7 +7,7 @@ from typing import Any
 
 import click
 import httpx
-from pprl_model import (
+from fable_model import (
     BitVectorEntity,
     BaseMatchRequest,
     MatchMethod,
