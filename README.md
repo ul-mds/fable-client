@@ -5,8 +5,8 @@ It also contains a command-line application which uses the library to process CS
 Weight estimation requires additional packages which are not shipped by default.
 To add them, install this package using the following command.
 
-```
-$ pip install pprl_client[faker]
+```bash
+pip install fable_client[faker]
 ```
 
 # Library methods
@@ -18,7 +18,7 @@ the [PPRL model package](https://github.com/ul-mds/pprl-model).
 ## Entity transformation
 
 ```python
-import pprl_client
+import fable_client
 from pprl_model import (
     EntityTransformRequest,
     TransformConfig,
@@ -28,7 +28,7 @@ from pprl_model import (
     NormalizationTransformer,
 )
 
-client = pprl_client.PPRLClient(base_url="http://localhost:8080")
+client = fable_client.FableClient(base_url="http://localhost:8080")
 
 response = client.transform(
     EntityTransformRequest(
@@ -45,7 +45,7 @@ print(response.entities)
 ## Entity masking
 
 ```python
-import pprl_client
+import fable_client
 from pprl_model import (
     EntityMaskRequest,
     MaskConfig,
@@ -57,7 +57,7 @@ from pprl_model import (
     AttributeValueEntity,
 )
 
-client = pprl_client.PPRLClient(base_url="http://localhost:8080")
+client = fable_client.FableClient(base_url="http://localhost:8080")
 
 response = client.mask(
     EntityMaskRequest(
@@ -79,10 +79,10 @@ print(response.entities)
 ## Bit vector matching
 
 ```python
-import pprl_client
+import fable_client
 from pprl_model import VectorMatchRequest, MatchConfig, SimilarityMeasure, BitVectorEntity
 
-client = pprl_client.PPRLClient(base_url="http://localhost:8080")
+client = fable_client.FableClient(base_url="http://localhost:8080")
 
 response = client.match(
     VectorMatchRequest(
@@ -102,7 +102,7 @@ print(response.matches)
 ## Attribute weight estimation
 
 ```python
-import pprl_client
+import fable_client
 from pprl_model import (
     AttributeValueEntity,
     BaseTransformRequest,
@@ -112,9 +112,9 @@ from pprl_model import (
     NormalizationTransformer,
 )
 
-client = pprl_client.PPRLClient(base_url="http://localhost:8080")
+client = fable_client.FableClient(base_url="http://localhost:8080")
 
-stats = pprl_client.estimate.compute_attribute_stats(
+stats = fable_client.estimate.compute_attribute_stats(
     client,
     [
         AttributeValueEntity(id="001", attributes={"given_name": "Max", "last_name": "Mustermann", "gender": "m"}),
@@ -132,12 +132,12 @@ print(stats)
 
 # Command line interface
 
-The `pprl` command exposes all the library's functions and adapts them to work with CSV files. 
-Running `pprl --help` provides an overview of the command options.
+The `fable` command exposes all the library's functions and adapts them to work with CSV files. 
+Running `fable --help` provides an overview of the command options.
 
 ```
-$ pprl --help
-Usage: pprl [OPTIONS] COMMAND [ARGS]...
+$ fable --help
+Usage: fable [OPTIONS] COMMAND [ARGS]...
 
   HTTP client for performing PPRL based on Bloom filters.
 
@@ -156,7 +156,7 @@ Commands:
   transform  Perform pre-processing on a CSV file with entities
 ```
 
-The `pprl` command works on two basic types of CSV files that follow a simple structure.
+The `fable` command works on two basic types of CSV files that follow a simple structure.
 Entity files are CSV files that contain a column with a unique identifier and arbitrary additional columns which
 contain values for certain attributes that identify an entity.
 Each row is representative of a single entity.
@@ -182,7 +182,7 @@ id,value
 005,CFk4I0sKwnRoiTEOQASy1QZfHCGB1GBgYQDcZwDDtIkGGLOmLRhrQyOSlQDUDoYTbvaBRVqbkRnqmYQbDTEGlG+2y60FMmBEKtxsr0I4I00oMpuoXAsDWmA=
 ```
 
-Pre-processing is done with the `pprl transform` command.
+Pre-processing is done with the `fable transform` command.
 It requires a base transform request file, an entity file and an output file to write the pre-processed entities to.
 Attribute and global transformer configurations can be provided, but at least one must be specified.
 
@@ -220,7 +220,7 @@ _request.json_
 ```
 
 ```
-$ pprl transform ./request.json ./input.csv ./output.csv  
+$ fable transform ./request.json ./input.csv ./output.csv  
 Transforming entities  [####################################]  100%
 ```
 
@@ -235,7 +235,7 @@ id,first_name,last_name,date_of_birth,gender
 005,rachel,dyer,19040202,female
 ```
 
-Masking is done with `pprl mask` and its subcommands.
+Masking is done with `fable mask` and its subcommands.
 It requires a base mask request file, an entity file and an output file to write the masked entities to.
 
 _request.json_
@@ -288,7 +288,7 @@ id,first_name,last_name,date_of_birth,gender
 ```
 
 ```
-$ pprl mask ./request.json ./input.csv ./output.csv
+$ fable mask ./request.json ./input.csv ./output.csv
 Masking entities  [####################################]  100%
 ```
 
@@ -303,7 +303,7 @@ id,value
 005,cUekQFQkI7TpTcRwmcNDoodRRBshlSEiAUjBQiMlxBLTmODMJICmDmxgUqYKonQEMFD58QsogRQFIgYUwJDOHA==
 ```
 
-Matching is done with the `pprl match` command.
+Matching is done with the `fable match` command.
 It allows the matching of multiple bit vector input files at once.
 If more than two files are provided, the command will pick out pairs of files and matches their contents against one 
 another.
@@ -345,7 +345,7 @@ id,value
 ```
 
 ```
-$ pprl match request.json domain.csv range.csv output.csv
+$ fable match request.json domain.csv range.csv output.csv
 Matching bit vectors from domain.csv and range.csv  [####################################]  100%
 ```
 
@@ -379,7 +379,7 @@ Data can be generated using [Faker](https://faker.readthedocs.io/).
 ```
 
 ```
-$ pprl estimate faker faker.json faker-output.json
+$ fable estimate faker faker.json faker-output.json
 ```
 
 *faker-output.json*

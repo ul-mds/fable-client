@@ -37,8 +37,8 @@ from pprl_model import (
 )
 from pydantic import BaseModel
 
-from pprl_client.main import app
-from pprl_client.types import FakerGeneratorConfig, FakerGeneratorSpec
+from fable_client.main import app
+from fable_client.types import FakerGeneratorConfig, FakerGeneratorSpec
 from tests.helpers import generate_person
 
 pytestmark = pytest.mark.integration
@@ -91,7 +91,7 @@ def write_model_to(path: Path, model: BaseModel):
         json.dump(model.model_dump(mode="json", exclude_none=True), f)
 
 
-def test_match_pairwise(tmp_path_factory, base64_factory, cli_runner, pprl_client):
+def test_match_pairwise(tmp_path_factory, base64_factory, cli_runner, fable_client):
     # set up vectors
     tmp_dir = tmp_path_factory.mktemp("output")
 
@@ -125,7 +125,7 @@ def test_match_pairwise(tmp_path_factory, base64_factory, cli_runner, pprl_clien
         app,
         [
             "--base-url",
-            str(pprl_client._client.base_url),
+            str(fable_client._client.base_url),
             "--batch-size",
             "10",
             "match",
@@ -148,7 +148,7 @@ def test_match_pairwise(tmp_path_factory, base64_factory, cli_runner, pprl_clien
         assert count(reader) == vector_count
 
 
-def test_match_crosswise(tmp_path_factory, base64_factory, cli_runner, pprl_client):
+def test_match_crosswise(tmp_path_factory, base64_factory, cli_runner, fable_client):
     # set up vectors
     tmp_dir = tmp_path_factory.mktemp("output")
 
@@ -182,7 +182,7 @@ def test_match_crosswise(tmp_path_factory, base64_factory, cli_runner, pprl_clie
         app,
         [
             "--base-url",
-            str(pprl_client._client.base_url),
+            str(fable_client._client.base_url),
             "--batch-size",
             "10",
             "match",
@@ -205,7 +205,7 @@ def test_match_crosswise(tmp_path_factory, base64_factory, cli_runner, pprl_clie
         assert count(reader) == vector_count * vector_count
 
 
-def test_transform(tmp_path_factory, uuid4_factory, cli_runner, pprl_client, faker):
+def test_transform(tmp_path_factory, uuid4_factory, cli_runner, fable_client, faker):
     # set up entities
     tmp_dir = tmp_path_factory.mktemp("output")
 
@@ -234,7 +234,7 @@ def test_transform(tmp_path_factory, uuid4_factory, cli_runner, pprl_client, fak
         app,
         [
             "--base-url",
-            str(pprl_client._client.base_url),
+            str(fable_client._client.base_url),
             "--batch-size",
             "100",
             "transform",
@@ -306,7 +306,7 @@ _mask_attributes_weighted = [
         ),
     ],
 )
-def test_mask(base_mask_request, tmp_path_factory, uuid4_factory, cli_runner, pprl_client, faker):
+def test_mask(base_mask_request, tmp_path_factory, uuid4_factory, cli_runner, fable_client, faker):
     # set up entities
     tmp_dir = tmp_path_factory.mktemp("output")
 
@@ -325,7 +325,7 @@ def test_mask(base_mask_request, tmp_path_factory, uuid4_factory, cli_runner, pp
         app,
         [
             "--base-url",
-            str(pprl_client._client.base_url),
+            str(fable_client._client.base_url),
             "--batch-size",
             "100",
             "mask",
@@ -347,7 +347,7 @@ def test_mask(base_mask_request, tmp_path_factory, uuid4_factory, cli_runner, pp
         assert count(reader) == entity_count
 
 
-def test_estimate_faker(tmp_path_factory, cli_runner, pprl_client):
+def test_estimate_faker(tmp_path_factory, cli_runner, fable_client):
     tmp_dir = tmp_path_factory.mktemp("output")
 
     # create config
@@ -384,7 +384,7 @@ def test_estimate_faker(tmp_path_factory, cli_runner, pprl_client):
         app,
         [
             "--base-url",
-            str(pprl_client._client.base_url),
+            str(fable_client._client.base_url),
             "--batch-size",
             "100",
             "estimate",

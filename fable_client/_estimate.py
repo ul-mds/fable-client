@@ -15,7 +15,7 @@ from typing import TypedDict
 import pprl_core
 from pprl_model import AttributeValueEntity, BaseTransformRequest
 
-from ._client import PPRLClient
+from ._client import FableClient
 
 
 class AttributeStats(TypedDict):
@@ -69,7 +69,7 @@ def compute_ngram_entropy(token_counts: dict[str, int]) -> float:
 
 
 def compute_attribute_stats(
-    client: PPRLClient,
+    client: FableClient,
     entities: list[AttributeValueEntity],
     base_transform_request: BaseTransformRequest,
     token_size: int = 2,

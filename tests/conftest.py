@@ -8,7 +8,7 @@ import pytest
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.waiting_utils import wait_for_logs
 
-from pprl_client import PPRLClient
+from fable_client import FableClient
 
 
 @pytest.fixture(scope="session")
@@ -41,8 +41,8 @@ def client(pprl_base_url):
 
 
 @pytest.fixture(scope="session")
-def pprl_client(client):
-    return PPRLClient(client=client)
+def fable_client(client):
+    return FableClient(client=client)
 
 
 @pytest.fixture(scope="session")

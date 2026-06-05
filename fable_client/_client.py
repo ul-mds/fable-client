@@ -30,7 +30,7 @@ class ValidationErrorResponse(BaseModel):
     detail: list[ValidationErrorDetail]
 
 
-class PPRLError(httpx.HTTPError):
+class FableError(httpx.HTTPError):
     def __init__(
         self, message: str, request: httpx.Request, error: GenericErrorResponse | ValidationErrorResponse = None
     ):
@@ -65,10 +65,10 @@ def new_error_from_response(r: httpx.Response):
         except (ValidationError, JSONDecodeError):
             pass
 
-    return PPRLError(error_message, r.request, error_response)
+    return FableError(error_message, r.request, error_response)
 
 
-class PPRLClient(object):
+class FableClient(object):
     def __init__(self, client: httpx.Client = None, base_url: str = None):
         self._client = client or httpx.Client(base_url=base_url)
 

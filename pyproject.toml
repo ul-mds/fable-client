@@ -1,9 +1,10 @@
 [project]
-name = "pprl-client"
+name = "fable-client"
 version = "0.4.0"
 description = "HTTP-based client for interacting with a service for privacy-preserving record linkage with Bloom filters."
 authors = [
-    {name = "Maximilian Jugl", email = "Maximilian.Jugl@medizin.uni-leipzig.de"}
+    {name = "Maximilian Jugl"},
+    {name = "Paul Brassel", email = "paul.brassel@medizin.uni-leipzig.de"}
 ]
 readme = "README.md"
 requires-python = ">=3.10,<4"
@@ -29,16 +30,16 @@ classifiers = [
 ]
 
 [project.scripts]
-pprl = "pprl_client.main:run_cli"
+fable = "fable_client.main:run_cli"
 
 [project.optional-dependencies]
 faker = [ "faker (>=26.0.0)" ]
 
 [project.urls]
-repository = "https://github.com/ul-mds/pprl-client"
+repository = "https://github.com/ul-mds/fable-client"
 
 [tool.poetry]
-packages = [{ include = "pprl_client" }]
+packages = [{ include = "fable_client" }]
 
 [tool.ruff]
 line-length = 120

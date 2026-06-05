@@ -9,9 +9,9 @@ from pprl_model import (
     DateTimeTransformer,
 )
 
-from pprl_client import estimate
+from fable_client import estimate
 from tests.helpers import generate_person
-from pprl_client.types import AttributeStats
+from fable_client.types import AttributeStats
 
 
 def test_split_into_wordlist(uuid4_factory, faker):
@@ -54,12 +54,12 @@ def test_count_tokens_in_token_list():
 
 
 @pytest.mark.integration
-def test_compute_attribute_stats(pprl_client, uuid4_factory, faker):
+def test_compute_attribute_stats(fable_client, uuid4_factory, faker):
     entities = [generate_person(uuid4_factory(), faker) for _ in range(100)]
     entity_0 = entities[0]
 
     attribute_name_to_attribute_stats_dict = estimate.compute_attribute_stats(
-        pprl_client,
+        fable_client,
         entities,
         BaseTransformRequest(
             config=TransformConfig(empty_value=EmptyValueHandling.skip),
@@ -92,7 +92,7 @@ def _is_attribute_stat_pair_equal(d0: dict[str, AttributeStats], d1: dict[str, A
 
 
 @pytest.mark.integration
-def test_compute_attribute_stats_with_different_padding(pprl_client, uuid4_factory, faker):
+def test_compute_attribute_stats_with_different_padding(fable_client, uuid4_factory, faker):
     entities = [generate_person(uuid4_factory(), faker) for _ in range(100)]
     computed_attribute_stats: list[dict[str, AttributeStats]] = []
 
@@ -100,7 +100,7 @@ def test_compute_attribute_stats_with_different_padding(pprl_client, uuid4_facto
     for padding in ("_", "#"):
         computed_attribute_stats.append(
             estimate.compute_attribute_stats(
-                pprl_client,
+                fable_client,
                 entities,
                 BaseTransformRequest(
                     config=TransformConfig(empty_value=EmptyValueHandling.skip),
@@ -115,7 +115,7 @@ def test_compute_attribute_stats_with_different_padding(pprl_client, uuid4_facto
 
 
 @pytest.mark.integration
-def test_compute_attribute_stats_with_different_token_sizes(pprl_client, uuid4_factory, faker):
+def test_compute_attribute_stats_with_different_token_sizes(fable_client, uuid4_factory, faker):
     entities = [generate_person(uuid4_factory(), faker) for _ in range(100)]
     computed_attribute_stats: list[dict[str, AttributeStats]] = []
 
@@ -123,7 +123,7 @@ def test_compute_attribute_stats_with_different_token_sizes(pprl_client, uuid4_f
     for token_size in (2, 3):
         computed_attribute_stats.append(
             estimate.compute_attribute_stats(
-                pprl_client,
+                fable_client,
                 entities,
                 BaseTransformRequest(
                     config=TransformConfig(empty_value=EmptyValueHandling.skip),
@@ -138,7 +138,7 @@ def test_compute_attribute_stats_with_different_token_sizes(pprl_client, uuid4_f
 
 
 @pytest.mark.integration
-def test_compute_attribute_stats_with_different_transform_config(pprl_client, uuid4_factory, faker):
+def test_compute_attribute_stats_with_different_transform_config(fable_client, uuid4_factory, faker):
     entities = [generate_person(uuid4_factory(), faker) for _ in range(100)]
     base_requests = [
         BaseTransformRequest(
@@ -162,7 +162,7 @@ def test_compute_attribute_stats_with_different_transform_config(pprl_client, uu
     for transform_base in base_requests:
         computed_attribute_stats.append(
             estimate.compute_attribute_stats(
-                pprl_client,
+                fable_client,
                 entities,
                 transform_base,
             )

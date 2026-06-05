@@ -24,7 +24,7 @@ from tests.helpers import generate_person
 pytestmark = pytest.mark.integration
 
 
-def test_match(pprl_client, base64_factory, uuid4_factory):
+def test_match(fable_client, base64_factory, uuid4_factory):
     domain_vectors = [
         BitVectorEntity(
             id=uuid4_factory(),
@@ -41,7 +41,7 @@ def test_match(pprl_client, base64_factory, uuid4_factory):
         for _ in range(10)
     ]
 
-    r = pprl_client.match(
+    r = fable_client.match(
         VectorMatchRequest(
             config=MatchConfig(
                 measure=SimilarityMeasure.jaccard,
@@ -56,10 +56,10 @@ def test_match(pprl_client, base64_factory, uuid4_factory):
     assert len(r.matches) == len(domain_vectors) * len(range_vectors)
 
 
-def test_transform(pprl_client, uuid4_factory, faker):
+def test_transform(fable_client, uuid4_factory, faker):
     entities = [generate_person(uuid4_factory(), faker) for _ in range(100)]
 
-    r = pprl_client.transform(
+    r = fable_client.transform(
         EntityTransformRequest(
             config=TransformConfig(empty_value=EmptyValueHandling.error),
             entities=entities,
@@ -74,10 +74,10 @@ def test_transform(pprl_client, uuid4_factory, faker):
     assert input_ids == output_ids
 
 
-def test_mask(pprl_client, uuid4_factory, faker):
+def test_mask(fable_client, uuid4_factory, faker):
     entities = [generate_person(uuid4_factory(), faker) for _ in range(100)]
 
-    r = pprl_client.mask(
+    r = fable_client.mask(
         EntityMaskRequest(
             config=MaskConfig(
                 token_size=2,
