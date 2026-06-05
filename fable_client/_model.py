@@ -1,6 +1,6 @@
 from typing import Any
 
-from pydantic import BaseModel, Field, conint
+from pydantic import BaseModel, Field
 
 
 class FakerGeneratorSpec(BaseModel):
@@ -15,6 +15,6 @@ def _default_faker_locale():
 
 class FakerGeneratorConfig(BaseModel):
     seed: int
-    count: conint(ge=0)
+    count: int = Field(ge=0)
     locale: list[str] = Field(default_factory=_default_faker_locale)
     generators: list[FakerGeneratorSpec]
