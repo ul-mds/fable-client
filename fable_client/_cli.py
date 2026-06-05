@@ -3,11 +3,11 @@ import csv
 import itertools
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, TypeVar
 
 import click
 import httpx
-from pprl_model import (
+from fable_model import (
     BitVectorEntity,
     BaseMatchRequest,
     MatchMethod,
@@ -21,15 +21,14 @@ from pprl_model import (
     WeightedAttributeConfig,
 )
 from pydantic import BaseModel
-from typing_extensions import TypeVar
 
-from ._client import PPRLClient
+from ._client import FableClient
 from ._estimate import compute_attribute_stats
 from ._model import FakerGeneratorConfig, FakerGeneratorSpec
 
 
-def create_client(ctx: click.Context) -> PPRLClient:
-    return PPRLClient(client=httpx.Client(base_url=ctx.obj["BASE_URL"], timeout=int(ctx.obj["TIMEOUT_SECS"])))
+def create_client(ctx: click.Context) -> FableClient:
+    return FableClient(client=httpx.Client(base_url=ctx.obj["BASE_URL"], timeout=int(ctx.obj["TIMEOUT_SECS"])))
 
 
 def read_bit_vector_entity_file(reader: csv.DictReader, id_column: str, value_column: str):
@@ -366,7 +365,7 @@ def faker(
     try:
         from faker import Faker
     except ImportError:
-        click.echo("Faker not found, install it with `pip install pprl_client[faker]`", err=True)
+        click.echo("Faker not found, install it with `pip install fable_client[faker]`", err=True)
         raise click.exceptions.Exit(1)
 
     # set up vars

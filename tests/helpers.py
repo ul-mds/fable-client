@@ -1,5 +1,5 @@
 from faker import Faker
-from pprl_model import AttributeValueEntity
+from fable_model import AttributeValueEntity
 
 
 def generate_person(person_id: str, faker: Faker):

@@ -9,7 +9,7 @@ inputs:
   poetry-version:
     required: false
     description: "Version of Poetry to use"
-    default: "2.1.0"
+    default: "2.4.1"
 
 runs:
   using: "composite"
@@ -18,7 +18,7 @@ runs:
       run: pipx install poetry==${{ inputs.poetry-version }}
       shell: bash
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ inputs.python-version }}
         cache: "poetry"

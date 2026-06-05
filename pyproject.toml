@@ -1,17 +1,18 @@
 [project]
-name = "pprl-client"
+name = "fable-client"
 version = "0.4.0"
-description = "HTTP-based client for interacting with a service for privacy-preserving record linkage with Bloom filters."
+description = "HTTP-based client for interacting with the FABLE service for privacy-preserving record linkage with Bloom filters."
 authors = [
-    {name = "Maximilian Jugl", email = "Maximilian.Jugl@medizin.uni-leipzig.de"}
+    {name = "Maximilian Jugl"},
+    {name = "Paul Brassel", email = "paul.brassel@medizin.uni-leipzig.de"}
 ]
 readme = "README.md"
 requires-python = ">=3.10,<4"
 dependencies = [
     "httpx (>=0.28.0,<0.29.0)",
     "click (>=8.0.0,<9.0.0)",
-    "pprl-model (>=0.1.6,<0.2.0)",
-    "pprl-core (>=0.1.4,<0.2.0)"
+    "fable-core (>=0.1.5,<0.2.0)",
+    "fable-model (>=0.1.7,<0.2.0)",
 ]
 license = "MIT"
 keywords = ["record linkage", "privacy", "bloom filter", "bitarray", "cryptography", "service", "client", "cli"]
@@ -25,20 +26,26 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering",
     "Topic :: Security :: Cryptography",
-    "Topic :: Software Development :: Libraries :: Python Modules"
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14"
 ]
 
 [project.scripts]
-pprl = "pprl_client.main:run_cli"
+fable = "fable_client.main:run_cli"
 
 [project.optional-dependencies]
 faker = [ "faker (>=26.0.0)" ]
 
 [project.urls]
-repository = "https://github.com/ul-mds/pprl-client"
+repository = "https://github.com/ul-mds/fable-client"
 
 [tool.poetry]
-packages = [{ include = "pprl_client" }]
+packages = [{ include = "fable_client" }]
 
 [tool.ruff]
 line-length = 120
@@ -48,8 +55,8 @@ markers = [
     "integration: mark a test as an integration test."
 ]
 env_files = [
-    ".env.test",
-    ".env"
+    ".env",
+    ".env.test"
 ]
 
 [build-system]
@@ -57,7 +64,10 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
-ruff = ">=0.9.0"
+ruff = ">=0.15.0"
 pytest = ">=8.3.0"
 testcontainers = "^4.9.2"
 pytest-dotenv = "^0.5.2"
+pytest-cov = "^7.1.0"
+pre-commit = "^4.6.0"
+readme-coverage-badger = "^1.1.0"

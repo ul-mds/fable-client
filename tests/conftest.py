@@ -6,28 +6,31 @@ from random import Random
 import httpx
 import pytest
 from testcontainers.core.container import DockerContainer
-from testcontainers.core.waiting_utils import wait_for_logs
+from testcontainers.core.wait_strategies import LogMessageWaitStrategy
 
-from pprl_client import PPRLClient
+from fable_client import FableClient
 
 
 @pytest.fixture(scope="session")
 def pprl_base_url():
     # check if environment variable is set
-    base_url = os.environ.get("PPRL_TEST_BASE_URL", None)
+    base_url = os.environ.get("PYTEST_PPRL_BASE_URL", "")
 
-    if base_url is not None:
+    if base_url != "":
         yield base_url
         return
 
     # if not, spin up a testcontainer
-    pprl_service_tag = os.environ.get("PPRL_TEST_SERVICE_VERSION", "0.1.5")
-    pprl_service_port = int(os.environ.get("PPRL_TEST_SERVICE_PORT", "8080"))
+    pprl_service_tag = os.environ.get("PYTEST_PPRL_SERVICE_VERSION", "latest")
+    pprl_service_port = int(os.environ.get("PYTEST_PPRL_SERVICE_PORT", "8080"))
 
-    with DockerContainer(f"ghcr.io/ul-mds/pprl-service:{pprl_service_tag}").with_exposed_ports(
-        pprl_service_port
-    ) as container:
-        wait_for_logs(container, "Application startup complete")
+    container = (
+        DockerContainer(f"ghcr.io/ul-mds/fable-pprl-service:{pprl_service_tag}")
+        .with_exposed_ports(pprl_service_port)
+        .waiting_for(LogMessageWaitStrategy("Application startup complete"))
+    )
+
+    with container:
         yield f"http://{container.get_container_host_ip()}:{container.get_exposed_port(pprl_service_port)}"
 
 
@@ -41,8 +44,8 @@ def client(pprl_base_url):
 
 
 @pytest.fixture(scope="session")
-def pprl_client(client):
-    return PPRLClient(client=client)
+def fable_client(client):
+    return FableClient(client=client)
 
 
 @pytest.fixture(scope="session")
