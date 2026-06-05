@@ -433,6 +433,22 @@ $ fable estimate faker faker.json faker-output.json
 ]
 ```
 
+## Configuring pytest
+
+In order to run integration tests, the FABLE PPRL service is needed.
+The first option is to spin up the service independently and direct pytest to it.
+Alternatively, pytest can start a Docker test container for the duration of the test run.
+The following table shows all available configuration options.
+These variables can be defined in `.env` or `.env.test`.
+
+| **Environment variable**          | **Description**                                                             | **Default** |
+|-----------------------------------|-----------------------------------------------------------------------------|-------------|
+| PYTEST_PPRL_BASE_URL<sup>1)</sup> | Base URL for the FABLE PPRL service                                         |             |
+| PYTEST_PPRL_SERVICE_VERSION       | Tag of the FABLE PPRL service image that will run inside the test container | latest      |
+| PYTEST_PRRL_SERVICE_PORT          | Port that will be exposed by the test container                             | 8080        |
+
+<sup>1)</sup> If defined, pytest will not spin up a test container.
+
 ## License
 
 MIT.
