@@ -6,7 +6,7 @@ from random import Random
 import httpx
 import pytest
 from testcontainers.core.container import DockerContainer
-from testcontainers.core.waiting_utils import wait_for_logs
+from testcontainers.core.wait_strategies import LogMessageWaitStrategy
 
 from fable_client import FableClient
 
@@ -24,10 +24,13 @@ def pprl_base_url():
     pprl_service_tag = os.environ.get("PPRL_TEST_SERVICE_VERSION", "0.1.5")
     pprl_service_port = int(os.environ.get("PPRL_TEST_SERVICE_PORT", "8080"))
 
-    with DockerContainer(f"ghcr.io/ul-mds/pprl-service:{pprl_service_tag}").with_exposed_ports(
-        pprl_service_port
-    ) as container:
-        wait_for_logs(container, "Application startup complete")
+    container = (
+        DockerContainer(f"ghcr.io/ul-mds/pprl-service:{pprl_service_tag}")
+        .with_exposed_ports(pprl_service_port)
+        .waiting_for(LogMessageWaitStrategy("Application startup complete"))
+    )
+
+    with container:
         yield f"http://{container.get_container_host_ip()}:{container.get_exposed_port(pprl_service_port)}"
 
 
