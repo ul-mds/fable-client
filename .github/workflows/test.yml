@@ -15,13 +15,14 @@ jobs:
     strategy:
       matrix:
         python-version:
+          - "3.14"
           - "3.13"
           - "3.12"
           - "3.11"
           - "3.10"
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Poetry
         uses: ./.github/actions/setup-poetry
         with:
@@ -29,11 +30,11 @@ jobs:
       - name: Install dependencies
         run: poetry install --with dev --all-extras
       - name: Test
-        run: poetry run pytest
+        run: poetry run pytest tests --cov=fable_client --cov-branch --cov-fail-under=90
         env:
-          PPRL_TEST_BASE_URL: "http://localhost:8080"
+          PYTEST_PPRL_BASE_URL: "http://localhost:8080"
     services:
       pprl:
-        image: ghcr.io/ul-mds/pprl-service:0.1.5
+        image: ghcr.io/ul-mds/fable-pprl-service:latest
         ports:
           - "8080:8080"
