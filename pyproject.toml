@@ -49,8 +49,8 @@ markers = [
     "integration: mark a test as an integration test."
 ]
 env_files = [
-    ".env.test",
-    ".env"
+    ".env",
+    ".env.test"
 ]
 
 [build-system]
