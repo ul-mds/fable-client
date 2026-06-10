@@ -35,5 +35,7 @@ jobs:
     services:
       pprl:
         image: ghcr.io/ul-mds/fable-pprl-service:latest
+        env:
+          ROLE: "both"
         ports:
           - "8080:8080"
