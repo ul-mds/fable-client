@@ -2,6 +2,7 @@
 [![Python Versions](https://img.shields.io/pypi/pyversions/fable-client?cacheSeconds=0)](https://pypi.org/project/fable-client/)
 ![Code Coverage](https://img.shields.io/badge/Coverage-92%25-green.svg)
 [![License](https://img.shields.io/pypi/l/fable-client?cacheSeconds=0)](https://pypi.org/project/fable-client/)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
 # FABLE Client
 
