@@ -109,8 +109,8 @@ def test_match_pairwise(tmp_path_factory, base64_factory, cli_runner, fable_clie
     # create base match request and export it
     base_match_request = BaseMatchRequest(
         config=MatchConfig(
-            measure=SimilarityMeasure.jaccard,
-            threshold=0,
+            measures=SimilarityMeasure.jaccard,
+            thresholds=0,
             method=MatchMethod.pairwise,
         )
     )
@@ -144,7 +144,14 @@ def test_match_pairwise(tmp_path_factory, base64_factory, cli_runner, fable_clie
     with open(output_path, mode="r", newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
 
-        assert set(reader.fieldnames) == {"domain_id", "domain_file", "range_id", "range_file", "similarity"}
+        assert set(reader.fieldnames) == {
+            "domain_id",
+            "domain_file",
+            "range_id",
+            "range_file",
+            "similarities",
+            "aggregated_similarity",
+        }
         assert count(reader) == vector_count
 
 
@@ -166,8 +173,8 @@ def test_match_crosswise(tmp_path_factory, base64_factory, cli_runner, fable_cli
     # create base match request and export it
     base_match_request = BaseMatchRequest(
         config=MatchConfig(
-            measure=SimilarityMeasure.jaccard,
-            threshold=0,
+            measures=SimilarityMeasure.jaccard,
+            thresholds=0,
             method=MatchMethod.crosswise,
         )
     )
@@ -201,7 +208,14 @@ def test_match_crosswise(tmp_path_factory, base64_factory, cli_runner, fable_cli
     with open(output_path, mode="r", newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
 
-        assert set(reader.fieldnames) == {"domain_id", "domain_file", "range_id", "range_file", "similarity"}
+        assert set(reader.fieldnames) == {
+            "domain_id",
+            "domain_file",
+            "range_id",
+            "range_file",
+            "similarities",
+            "aggregated_similarity",
+        }
         assert count(reader) == vector_count * vector_count
 
 

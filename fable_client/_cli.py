@@ -167,7 +167,7 @@ def match(
     with write_csv_file(
         ctx,
         output_file_path,
-        ["domain_id", "domain_file", "range_id", "range_file", "similarity"],
+        ["domain_id", "domain_file", "range_id", "range_file", "similarities", "aggregated_similarity"],
         mode="w",
         write_header=True,
     ) as writer:
@@ -214,7 +214,8 @@ def match(
                                     "domain_file": domain_file_path.name,
                                     "range_id": m.range.id,
                                     "range_file": range_file_path.name,
-                                    "similarity": m.similarity,
+                                    "similarities": m.similarities,
+                                    "aggregated_similarity": m.aggregated_similarity,
                                 }
                                 for m in r.matches
                             ]

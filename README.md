@@ -330,8 +330,8 @@ _request.json_
 ```json
 {
   "config": {
-    "measure": "jaccard",
-    "threshold": 0.7
+    "measures": "jaccard",
+    "thresholds": 0.7
   }
 }
 ```
@@ -366,8 +366,8 @@ Matching bit vectors from domain.csv and range.csv  [###########################
 _output.csv_
 
 ```csv
-domain_id,domain_file,range_id,range_file,similarity
-001,domain.csv,104,range.csv,0.9690721649484536
+domain_id,domain_file,range_id,range_file,similarities,aggregated_similarity
+001,domain.csv,104,range.csv,[0.9690721649484536],
 ```
 
 Weight estimation is done with the `fable estimate` command.
@@ -444,7 +444,7 @@ These variables can be defined in `.env` or `.env.test`.
 | **Environment variable**          | **Description**                                                             | **Default** |
 |-----------------------------------|-----------------------------------------------------------------------------|-------------|
 | PYTEST_PPRL_BASE_URL<sup>1)</sup> | Base URL for the FABLE PPRL service                                         |             |
-| PYTEST_PPRL_SERVICE_VERSION       | Tag of the FABLE PPRL service image that will run inside the test container | latest      |
+| PYTEST_PPRL_SERVICE_VERSION       | Tag of the FABLE PPRL service image that will run inside the test container |             |
 | PYTEST_PRRL_SERVICE_PORT          | Port that will be exposed by the test container                             | 8080        |
 
 <sup>1)</sup> If defined, pytest will not spin up a test container.

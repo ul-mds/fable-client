@@ -21,13 +21,14 @@ def pprl_base_url():
         return
 
     # if not, spin up a testcontainer
-    pprl_service_tag = os.environ.get("PYTEST_PPRL_SERVICE_VERSION", "latest")
+    pprl_service_tag = os.environ.get("PYTEST_PPRL_SERVICE_VERSION")
     pprl_service_port = int(os.environ.get("PYTEST_PPRL_SERVICE_PORT", "8080"))
 
     container = (
         DockerContainer(f"ghcr.io/ul-mds/fable-pprl-service:{pprl_service_tag}")
         .with_exposed_ports(pprl_service_port)
         .waiting_for(LogMessageWaitStrategy("Application startup complete"))
+        .with_env("ROLE", "both")
     )
 
     with container:

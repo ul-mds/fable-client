@@ -47,8 +47,8 @@ def test_match(fable_client, base64_factory, uuid4_factory):
     r = fable_client.match(
         VectorMatchRequest(
             config=MatchConfig(
-                measure=SimilarityMeasure.jaccard,
-                threshold=0,
+                measures=SimilarityMeasure.jaccard,
+                thresholds=0,
                 method=MatchMethod.crosswise,
             ),
             domain=domain_vectors,
