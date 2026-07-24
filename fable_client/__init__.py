@@ -1,5 +1,5 @@
-__all__ = ["FableClient", "FableError", "estimate", "types"]
+__all__ = ["PPRLClient", "FableError", "estimate", "types"]
 
-from ._client import FableClient, FableError
+from ._client import PPRLClient, FableError
 from . import _estimate as estimate
 from . import types

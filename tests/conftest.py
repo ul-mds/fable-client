@@ -8,7 +8,7 @@ import pytest
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.wait_strategies import LogMessageWaitStrategy
 
-from fable_client import FableClient
+from fable_client import PPRLClient
 
 
 @pytest.fixture(scope="session")
@@ -46,7 +46,7 @@ def client(pprl_base_url):
 
 @pytest.fixture(scope="session")
 def fable_client(client):
-    return FableClient(client=client)
+    return PPRLClient(client=client)
 
 
 @pytest.fixture(scope="session")

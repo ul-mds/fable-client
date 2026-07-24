@@ -22,13 +22,13 @@ from fable_model import (
 )
 from pydantic import BaseModel
 
-from ._client import FableClient
+from ._client import PPRLClient
 from ._estimate import compute_attribute_stats
 from ._model import FakerGeneratorConfig, FakerGeneratorSpec
 
 
-def create_client(ctx: click.Context) -> FableClient:
-    return FableClient(client=httpx.Client(base_url=ctx.obj["BASE_URL"], timeout=int(ctx.obj["TIMEOUT_SECS"])))
+def create_client(ctx: click.Context) -> PPRLClient:
+    return PPRLClient(client=httpx.Client(base_url=ctx.obj["BASE_URL"], timeout=int(ctx.obj["TIMEOUT_SECS"])))
 
 
 def read_bit_vector_entity_file(reader: csv.DictReader, id_column: str, value_column: str):

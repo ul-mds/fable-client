@@ -68,7 +68,7 @@ def new_error_from_response(r: httpx.Response):
     return FableError(error_message, r.request, error_response)
 
 
-class FableClient(object):
+class PPRLClient(object):
     def __init__(self, client: httpx.Client = None, base_url: str = None):
         self._client = client or httpx.Client(base_url=base_url)
 

@@ -43,7 +43,7 @@ from fable_model import (
     NormalizationTransformer,
 )
 
-client = fable_client.FableClient(base_url="http://localhost:8080")
+client = fable_client.PPRLClient(base_url="http://localhost:8080")
 
 response = client.transform(
     EntityTransformRequest(
@@ -72,7 +72,7 @@ from fable_model import (
     AttributeValueEntity,
 )
 
-client = fable_client.FableClient(base_url="http://localhost:8080")
+client = fable_client.PPRLClient(base_url="http://localhost:8080")
 
 response = client.mask(
     EntityMaskRequest(
@@ -97,7 +97,7 @@ print(response.entities)
 import fable_client
 from fable_model import VectorMatchRequest, MatchConfig, SimilarityMeasure, BitVectorEntity
 
-client = fable_client.FableClient(base_url="http://localhost:8080")
+client = fable_client.PPRLClient(base_url="http://localhost:8080")
 
 response = client.match(
     VectorMatchRequest(
@@ -127,7 +127,7 @@ from fable_model import (
     NormalizationTransformer,
 )
 
-client = fable_client.FableClient(base_url="http://localhost:8080")
+client = fable_client.PPRLClient(base_url="http://localhost:8080")
 
 stats = fable_client.estimate.compute_attribute_stats(
     client,

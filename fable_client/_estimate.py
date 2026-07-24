@@ -15,7 +15,7 @@ from typing import TypedDict
 import fable_core
 from fable_model import AttributeValueEntity, BaseTransformRequest
 
-from ._client import FableClient
+from ._client import PPRLClient
 
 
 class AttributeStats(TypedDict):
@@ -69,7 +69,7 @@ def compute_ngram_entropy(token_counts: dict[str, int]) -> float:
 
 
 def compute_attribute_stats(
-    client: FableClient,
+    client: PPRLClient,
     entities: list[AttributeValueEntity],
     base_transform_request: BaseTransformRequest,
     token_size: int = 2,
