@@ -82,10 +82,10 @@ class PPRLClient(object):
         return model_out(**r.json())
 
     def match(self, request: VectorMatchRequest):
-        return self._request("match/", request, VectorMatchResponse)
+        return self._request("match", request, VectorMatchResponse)
 
     def transform(self, request: EntityTransformRequest):
-        return self._request("transform/", request, EntityTransformResponse)
+        return self._request("transform", request, EntityTransformResponse)
 
     def mask(self, request: EntityMaskRequest):
-        return self._request("mask/", request, EntityMaskResponse)
+        return self._request("mask", request, EntityMaskResponse)
