@@ -8,16 +8,16 @@ from typing import Any, TypeVar
 import click
 import httpx2 as httpx
 from fable_model import (
-    BitVectorEntity,
-    BaseMatchRequest,
-    MatchMethod,
-    BaseTransformRequest,
     AttributeValueEntity,
     BaseMaskRequest,
-    TransformConfig,
+    BaseMatchRequest,
+    BaseTransformRequest,
+    BitVectorEntity,
     EmptyValueHandling,
     GlobalTransformerConfig,
+    MatchMethod,
     NormalizationTransformer,
+    TransformConfig,
     WeightedAttributeConfig,
 )
 from pydantic import BaseModel
@@ -171,7 +171,7 @@ def match(
         mode="w",
         write_header=True,
     ) as writer:
-        for domain_idx in range(0, file_count - 1):
+        for domain_idx in range(file_count - 1):
             for range_idx in range(domain_idx + 1, file_count):
                 # get domain and range vectors
                 domain_vectors, range_vectors = vectors_per_file[domain_idx], vectors_per_file[range_idx]
@@ -320,7 +320,6 @@ def mask(
 @app.group()
 def estimate():
     """Estimate attribute weights based on randomly generated data."""
-    pass
 
 
 def common_estimate_options(fn):

@@ -1,15 +1,15 @@
 __all__ = [
+    "AttributeStats",
+    "compute_attribute_stats",
+    "compute_average_tokens_for_token_list",
+    "compute_ngram_entropy",
+    "count_tokens_in_token_list",
     "split_into_wordlist",
     "tokenize_wordlist",
-    "compute_average_tokens_for_token_list",
-    "count_tokens_in_token_list",
-    "compute_ngram_entropy",
-    "compute_attribute_stats",
-    "AttributeStats",
 ]
 
 import math
-from collections import defaultdict, Counter
+from collections import Counter, defaultdict
 from typing import TypedDict
 
 import fable_core

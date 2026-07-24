@@ -1,5 +1,5 @@
-from faker import Faker
 from fable_model import AttributeValueEntity
+from faker import Faker
 
 
 def generate_person(person_id: str, faker: Faker):

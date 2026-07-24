@@ -2,26 +2,26 @@ import httpx2 as httpx
 import pytest
 from fable_model import (
     BitVectorEntity,
-    VectorMatchRequest,
-    MatchConfig,
-    SimilarityMeasure,
-    MatchMethod,
-    EntityTransformRequest,
-    TransformConfig,
+    CLKFilter,
     EmptyValueHandling,
-    GlobalTransformerConfig,
-    NormalizationTransformer,
     EntityMaskRequest,
-    MaskConfig,
+    EntityTransformRequest,
+    GlobalTransformerConfig,
+    HashAlgorithm,
     HashConfig,
     HashFunction,
-    HashAlgorithm,
+    MaskConfig,
+    MatchConfig,
+    MatchMethod,
+    NormalizationTransformer,
     RandomHash,
-    CLKFilter,
+    SimilarityMeasure,
+    TransformConfig,
+    VectorMatchRequest,
 )
 
 from fable_client import FableError
-from fable_client._client import new_error_from_response, ValidationErrorResponse, GenericErrorResponse
+from fable_client._client import GenericErrorResponse, ValidationErrorResponse, new_error_from_response
 from tests.helpers import generate_person
 
 pytestmark = pytest.mark.integration

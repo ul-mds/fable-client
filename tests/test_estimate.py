@@ -1,17 +1,17 @@
 import pytest
 from fable_model import (
+    AttributeTransformerConfig,
     BaseTransformRequest,
-    TransformConfig,
+    DateTimeTransformer,
     EmptyValueHandling,
     GlobalTransformerConfig,
     NormalizationTransformer,
-    AttributeTransformerConfig,
-    DateTimeTransformer,
+    TransformConfig,
 )
 
 from fable_client import estimate
-from tests.helpers import generate_person
 from fable_client.types import AttributeStats
+from tests.helpers import generate_person
 
 
 def test_split_into_wordlist(uuid4_factory, faker):

@@ -1,40 +1,39 @@
 import csv
 import hashlib
 import json
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from pathlib import Path
-from typing import Callable
 
 import pytest
 from click.testing import CliRunner
-from faker import Faker
 from fable_model import (
+    AttributeSalt,
+    AttributeTransformerConfig,
+    BaseMaskRequest,
     BaseMatchRequest,
-    MatchConfig,
-    SimilarityMeasure,
-    MatchMethod,
     BaseTransformRequest,
-    TransformConfig,
+    CLKFilter,
+    CLKRBFFilter,
+    DoubleHash,
     EmptyValueHandling,
     GlobalTransformerConfig,
-    NormalizationTransformer,
-    AttributeTransformerConfig,
-    MappingTransformer,
-    PermuteHardener,
-    RehashHardener,
-    StaticAttributeConfig,
-    AttributeSalt,
-    WeightedAttributeConfig,
-    BaseMaskRequest,
-    MaskConfig,
+    HashAlgorithm,
     HashConfig,
     HashFunction,
-    HashAlgorithm,
-    DoubleHash,
-    CLKFilter,
+    MappingTransformer,
+    MaskConfig,
+    MatchConfig,
+    MatchMethod,
+    NormalizationTransformer,
+    PermuteHardener,
     RBFFilter,
-    CLKRBFFilter,
+    RehashHardener,
+    SimilarityMeasure,
+    StaticAttributeConfig,
+    TransformConfig,
+    WeightedAttributeConfig,
 )
+from faker import Faker
 from pydantic import BaseModel
 
 from fable_client.main import app
