@@ -1,7 +1,7 @@
 from json import JSONDecodeError
 from typing import TypeVar
 
-import httpx
+import httpx2 as httpx
 from fable_model import (
     VectorMatchRequest,
     VectorMatchResponse,

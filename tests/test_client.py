@@ -1,4 +1,4 @@
-import httpx
+import httpx2 as httpx
 import pytest
 from fable_model import (
     BitVectorEntity,

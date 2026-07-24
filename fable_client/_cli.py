@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, TypeVar
 
 import click
-import httpx
+import httpx2 as httpx
 from fable_model import (
     BitVectorEntity,
     BaseMatchRequest,

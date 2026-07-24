@@ -3,7 +3,7 @@ import os
 import uuid
 from random import Random
 
-import httpx
+import httpx2 as httpx
 import pytest
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.wait_strategies import LogMessageWaitStrategy
