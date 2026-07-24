@@ -1,7 +1,7 @@
 [project]
 name = "fable-client"
 version = "0.6.0"
-description = "HTTP-based client for interacting with the FABLE service for privacy-preserving record linkage with Bloom filters."
+description = "HTTP-based client for interacting with the FABLE services for privacy-preserving record linkage with Bloom filters."
 authors = [
     {name = "Maximilian Jugl"},
     {name = "Paul Brassel", email = "paul.brassel@medizin.uni-leipzig.de"}
