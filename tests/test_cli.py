@@ -424,6 +424,6 @@ def test_estimate_faker(tmp_path_factory, cli_runner, fable_client):
     assert output_config_len > 0
 
     # ensure that each attribute config is unique
-    assert output_config_len == len(set(c.attribute_name for c in output_configs))
-    assert output_config_len == len(set(c.weight for c in output_configs))
-    assert output_config_len == len(set(c.average_token_count for c in output_configs))
+    assert output_config_len == len({c.attribute_name for c in output_configs})
+    assert output_config_len == len({c.weight for c in output_configs})
+    assert output_config_len == len({c.average_token_count for c in output_configs})

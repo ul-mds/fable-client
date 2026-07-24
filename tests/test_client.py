@@ -70,8 +70,8 @@ def test_transform(fable_client, uuid4_factory, faker):
         )
     )
 
-    input_ids = set(e.id for e in entities)
-    output_ids = set(e.id for e in r.entities)
+    input_ids = {e.id for e in entities}
+    output_ids = {e.id for e in r.entities}
 
     assert len(entities) == len(r.entities)
     assert input_ids == output_ids
@@ -93,8 +93,8 @@ def test_mask(fable_client, uuid4_factory, faker):
         )
     )
 
-    input_ids = set(e.id for e in entities)
-    output_ids = set(e.id for e in r.entities)
+    input_ids = {e.id for e in entities}
+    output_ids = {e.id for e in r.entities}
 
     assert len(entities) == len(r.entities)
     assert input_ids == output_ids

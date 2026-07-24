@@ -23,7 +23,7 @@ def test_split_into_wordlist(uuid4_factory, faker):
     # check that all attribute names are present as keys
     assert set(attribute_name_to_wordlist_dict.keys()) == set(entity_0.attributes.keys())
     # check that each attribute name has values from all entities assigned to them
-    assert all([set(v) == set([e.attributes[k] for e in entities]) for k, v in attribute_name_to_wordlist_dict.items()])
+    assert all(set(v) == {e.attributes[k] for e in entities} for k, v in attribute_name_to_wordlist_dict.items())
 
 
 def test_tokenize_wordlist():

@@ -63,7 +63,7 @@ def read_attribute_value_entity_file(reader: csv.DictReader, id_column: str):
             },
         )
 
-    entities = list(_row_to_entity(row) for row in reader)
+    entities = [_row_to_entity(row) for row in reader]
 
     return field_names, entities
 
@@ -155,7 +155,7 @@ def match(
     do_pairwise_matching = base_match_request.config.method == MatchMethod.pairwise
 
     if do_pairwise_matching:
-        vector_lens = set(len(v) for v in vectors_per_file)
+        vector_lens = {len(v) for v in vectors_per_file}
 
         if len(vector_lens) != 1:
             click.echo(

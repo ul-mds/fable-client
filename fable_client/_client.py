@@ -69,7 +69,7 @@ def new_error_from_response(r: httpx.Response):
 
 
 class PPRLClient:
-    def __init__(self, client: httpx.Client = None, base_url: str = None):
+    def __init__(self, client: httpx.Client | None = None, base_url: str | None = None):
         self._client = client or httpx.Client(base_url=base_url)
 
     def _request(self, path: str, model_in: _MI, model_out: type[_MO]) -> _MO:
