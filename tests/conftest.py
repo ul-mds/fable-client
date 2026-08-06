@@ -41,11 +41,14 @@ def client(pprl_base_url):
 
     # sanity check
     assert client.get("healthz").status_code == httpx.codes.OK.value
-    return client
+
+    yield client
+
+    client.close()
 
 
 @pytest.fixture(scope="session")
-def fable_client(client):
+def pprl_client(client):
     return PPRLClient(client=client)
 
 
