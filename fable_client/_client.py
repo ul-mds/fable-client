@@ -72,6 +72,9 @@ class PPRLClient:
     def __init__(self, client: httpx.Client | None = None, base_url: str | None = None):
         self._client = client or httpx.Client(base_url=base_url)
 
+    def close(self):
+        self._client.close()
+
     def _request(self, path: str, model_in: _MI, model_out: type[_MO]) -> _MO:
         r = self._client.post(path, json=model_in.model_dump(mode="json"))
 
