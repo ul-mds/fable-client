@@ -14,14 +14,14 @@ from fable_client import PPRLClient
 @pytest.fixture(scope="session")
 def pprl_base_url():
     # check if environment variable is set
-    base_url = os.environ.get("PYTEST_PPRL_BASE_URL", "")
+    base_url = os.environ.get("PYTEST_PPRL_SERVICE_BASE_URL", "")
 
     if base_url != "":
         yield base_url
         return
 
     # if not, spin up a testcontainer
-    pprl_service_tag = os.environ.get("PYTEST_PPRL_SERVICE_VERSION")
+    pprl_service_tag = os.environ["PYTEST_PPRL_SERVICE_VERSION"]
     pprl_service_port = int(os.environ.get("PYTEST_PPRL_SERVICE_PORT", "8080"))
 
     container = (
