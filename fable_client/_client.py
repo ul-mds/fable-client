@@ -52,7 +52,7 @@ def new_error_from_response(r: httpx.Response):
     error_message = f"received status code {r.status_code}"
 
     # validation error (422 by default with FastAPI)
-    if r.status_code == httpx.codes.UNPROCESSABLE_ENTITY.value:
+    if r.status_code == httpx.codes.UNPROCESSABLE_CONTENT:
         try:
             error_response = ValidationErrorResponse(**r.json())
             error_message += ": invalid request"

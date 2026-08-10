@@ -103,7 +103,7 @@ def test_mask(pprl_client, uuid4_factory, faker):
 def test_validation_error():
     request = httpx.Request("POST", "http://test/match/")
     response = httpx.Response(
-        httpx.codes.UNPROCESSABLE_ENTITY.value,
+        httpx.codes.UNPROCESSABLE_CONTENT,
         json={"detail": [{"loc": ["body"], "msg": "field required", "type": "missing"}]},
         request=request,
     )
