@@ -1,12 +1,20 @@
 from json import JSONDecodeError
-from typing import TypeVar
+from typing import Literal, TypeVar, overload
 
 import httpx2 as httpx
 from fable_model import (
+    ClientResultRequest,
+    ClientResultResponse,
+    ClientSubmissionRequest,
     EntityMaskRequest,
     EntityMaskResponse,
     EntityTransformRequest,
     EntityTransformResponse,
+    SessionCreationRequest,
+    SessionCreationResponse,
+    SessionDeletionRequest,
+    SessionUpdateRequest,
+    SessionUpdateResponse,
     VectorMatchRequest,
     VectorMatchResponse,
 )
@@ -68,27 +76,75 @@ def new_error_from_response(r: httpx.Response):
     return FableError(error_message, r.request, error_response)
 
 
-class PPRLClient:
+class BaseClient:
     def __init__(self, client: httpx.Client | None = None, base_url: str | None = None):
         self._client = client or httpx.Client(base_url=base_url)
 
     def close(self):
         self._client.close()
 
-    def _request(self, path: str, model_in: _MI, model_out: type[_MO]) -> _MO:
-        r = self._client.post(path, json=model_in.model_dump(mode="json"))
+    @overload
+    def _request(
+        self,
+        path: str,
+        model_in: _MI,
+        model_out: type[_MO],
+        method: Literal["POST", "GET", "PUT", "DELETE", "PATCH"] = "POST",
+        expected_code: int = httpx.codes.OK,
+    ) -> _MO: ...
 
-        # we generally expect a 200 here
-        if r.status_code != httpx.codes.OK.value:
+    @overload
+    def _request(
+        self,
+        path: str,
+        model_in: _MI,
+        model_out: None,
+        method: Literal["POST", "GET", "PUT", "DELETE", "PATCH"] = "POST",
+        expected_code: int = httpx.codes.OK,
+    ) -> None: ...
+
+    def _request(
+        self,
+        path: str,
+        model_in: _MI,
+        model_out: type[_MO] | None,
+        method: Literal["POST", "GET", "PUT", "DELETE", "PATCH"] = "POST",
+        expected_code: int = httpx.codes.OK,
+    ) -> _MO | None:
+        r = self._client.request(method, path, json=model_in.model_dump(mode="json"))
+
+        if r.status_code != expected_code:
             raise new_error_from_response(r)
 
-        return model_out(**r.json())
+        if model_out is None:
+            return None
 
-    def match(self, request: VectorMatchRequest):
+        return model_out.model_validate(r.json())
+
+
+class PPRLClient(BaseClient):
+    def match(self, request: VectorMatchRequest) -> VectorMatchResponse:
         return self._request("match", request, VectorMatchResponse)
 
-    def transform(self, request: EntityTransformRequest):
+    def transform(self, request: EntityTransformRequest) -> EntityTransformResponse:
         return self._request("transform", request, EntityTransformResponse)
 
-    def mask(self, request: EntityMaskRequest):
+    def mask(self, request: EntityMaskRequest) -> EntityMaskResponse:
         return self._request("mask", request, EntityMaskResponse)
+
+
+class BrokerClient(BaseClient):
+    def create_session(self, request: SessionCreationRequest) -> SessionCreationResponse:
+        return self._request("session", request, SessionCreationResponse, expected_code=httpx.codes.CREATED)
+
+    def delete_session(self, request: SessionDeletionRequest) -> None:
+        return self._request("session", request, None, method="DELETE", expected_code=httpx.codes.ACCEPTED)
+
+    def refresh_session(self, request: SessionUpdateRequest) -> SessionUpdateResponse:
+        return self._request("session", request, SessionUpdateResponse, method="PATCH")
+
+    def submit(self, request: ClientSubmissionRequest) -> None:
+        return self._request("session/submit", request, None, expected_code=httpx.codes.ACCEPTED)
+
+    def result(self, request: ClientResultRequest) -> ClientResultResponse:
+        return self._request("session/result", request, ClientResultResponse)
