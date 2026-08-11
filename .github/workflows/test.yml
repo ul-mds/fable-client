@@ -21,6 +21,42 @@ jobs:
           - "3.11"
       fail-fast: false
     steps:
+      - name: Start broker worker
+        env:
+          AMQP_URL: amqp://guest:guest@localhost:5672//
+          REDIS_URL: redis://localhost:6379/0
+          NEO4J_URL: bolt://localhost:7687
+          PPRL_SERVICE_BASE_URL: http://localhost:8080
+        run: |
+          docker run -d \
+          --name broker-worker \
+          -e AMQP_URL="$AMQP_URL$" \
+          -e REDIS_URL="$REDIS_URL$" \
+          -e NEO4J_URL="$NEO4J_URL$" \
+          -e PPRL_SERVICE_BASE_URL="$PPRL_SERVICE_BASE_URL$" \
+          ghcr.io/ul-mds/fable-broker:latest \
+          celery -A fable_broker.worker.celery worker \
+          --loglevel INFO
+      - name: Start broker API
+        env:
+          AMQP_URL: amqp://guest:guest@localhost:5672//
+          REDIS_URL: redis://localhost:6379/0
+          NEO4J_URL: bolt://localhost:7687
+          PPRL_SERVICE_BASE_URL: http://localhost:8080
+        run: |
+          docker run -d \
+          --name broker-api \
+          -p 8081:8081 \
+          -e AMQP_URL="$AMQP_URL$" \
+          -e REDIS_URL="$REDIS_URL$" \
+          -e NEO4J_URL="$NEO4J_URL$" \
+          -e PPRL_SERVICE_BASE_URL="$PPRL_SERVICE_BASE_URL$" \
+          ghcr.io/ul-mds/fable-broker:latest \
+          uvicorn fable_broker.server:app \
+          --host 0.0.0.0 \
+          --port 8081 \
+          --workers 1 \
+          --log-config config/logging.yaml
       - uses: actions/checkout@v6
       - name: Set up Poetry
         uses: ./.github/actions/setup-poetry
@@ -31,11 +67,27 @@ jobs:
       - name: Test
         run: poetry run pytest tests --cov=fable_client --cov-branch --cov-fail-under=90
         env:
-          PYTEST_PPRL_BASE_URL: "http://localhost:8080"
+          PYTEST_PPRL_SERVICE_BASE_URL: http://localhost:8080
+          PYTEST_BROKER_SERVICE_BASE_URL: http://localhost:8081
     services:
       pprl:
         image: ghcr.io/ul-mds/fable-pprl-service:latest
         env:
-          ROLE: "both"
+          ROLE: both
         ports:
-          - "8080:8080"
+          - 8080:8080
+      neo4j:
+        image: neo4j:5.26.27-community
+        env:
+          NEO4J_AUTH: none
+        ports:
+          - 7474:7474
+          - 7687:7687
+      amqp:
+        image: rabbitmq:3.13.7
+        ports:
+          - 5672:5672
+      redis:
+        image: redis:8.6.4
+        ports:
+          - 6379:6379
