@@ -30,3 +30,6 @@ jobs:
         run: poetry install --with dev --all-extras
       - name: Test
         run: poetry run pytest tests --cov=fable_client --cov-branch --cov-fail-under=90
+        env:
+          PYTEST_PPRL_SERVICE_VERSION: latest
+          PYTEST_BROKER_SERVICE_VERSION: latest
