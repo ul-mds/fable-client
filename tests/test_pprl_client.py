@@ -1,3 +1,4 @@
+import httpx2
 import pytest
 from fable_model import (
     BitVectorEntity,
@@ -95,3 +96,7 @@ def test_mask(pprl_client, uuid4_factory, faker):
 
     assert len(entities) == len(r.entities)
     assert input_ids == output_ids
+
+
+def test_version(pprl_base_url, pprl_client):
+    assert pprl_client.version == httpx2.get(pprl_base_url).json()["version"]
