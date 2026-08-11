@@ -709,9 +709,9 @@ These variables can be defined in `.env` or `.env.test`.
 | **Environment variable**                    | **Description**                                                               | **Default** |
 |---------------------------------------------|-------------------------------------------------------------------------------|-------------|
 | PYTEST_PPRL_SERVICE_BASE_URL<sup>1)</sup>   | Base URL for the FABLE PPRL service                                           |             |
-| PYTEST_PPRL_SERVICE_VERSION                 | Tag of the FABLE PPRL service image that will run inside the test container   |             |
+| PYTEST_PPRL_SERVICE_VERSION                 | Tag of the FABLE PPRL service image that will run inside the test container   | latest      |
 | PYTEST_BROKER_SERVICE_BASE_URL<sup>1)</sup> | Base URL for the FABLE Broker service                                         |             |
-| PYTEST_BROKER_SERVICE_VERSION               | Tag of the FABLE Broker service image that will run inside the test container |             |
+| PYTEST_BROKER_SERVICE_VERSION               | Tag of the FABLE Broker service image that will run inside the test container | latest      |
 
 <sup>1)</sup> If defined, pytest will not spin up a test container.
 
