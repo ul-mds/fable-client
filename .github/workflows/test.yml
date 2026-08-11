@@ -31,11 +31,5 @@ jobs:
       - name: Test
         run: poetry run pytest tests --cov=fable_client --cov-branch --cov-fail-under=90
         env:
-          PYTEST_PPRL_BASE_URL: "http://localhost:8080"
-    services:
-      pprl:
-        image: ghcr.io/ul-mds/fable-pprl-service:latest
-        env:
-          ROLE: "both"
-        ports:
-          - "8080:8080"
+          PYTEST_PPRL_SERVICE_VERSION: latest
+          PYTEST_BROKER_SERVICE_VERSION: latest

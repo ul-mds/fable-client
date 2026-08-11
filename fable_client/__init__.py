@@ -1,5 +1,11 @@
-__all__ = ["FableError", "PPRLClient", "estimate", "types"]
-
 from . import _estimate as estimate
 from . import types
-from ._client import FableError, PPRLClient
+from ._client import BrokerClient, FableError, PPRLClient
+
+__all__ = [
+    "BrokerClient",
+    "FableError",
+    "PPRLClient",
+    "estimate",
+    "types",
+]

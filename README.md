@@ -1,13 +1,14 @@
 [![PyPI](https://img.shields.io/pypi/v/fable-client?cacheSeconds=0)](https://pypi.org/project/fable-client/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/fable-client?cacheSeconds=0)](https://pypi.org/project/fable-client/)
-![Code Coverage](https://img.shields.io/badge/Coverage-91%25-green.svg)
+![Code Coverage](https://img.shields.io/badge/Coverage-92%25-green.svg)
 [![License](https://img.shields.io/pypi/l/fable-client?cacheSeconds=0)](https://pypi.org/project/fable-client/)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
 # FABLE Client
 
-This package contains a HTTP-based client for working with the server provided by
-the [PPRL service](https://github.com/ul-mds/fable-pprl-service) which is part of the FABLE
+This package contains HTTP-based clients for working with the servers provided by
+the [PPRL service](https://github.com/ul-mds/fable-pprl-service) and the
+[Broker service](https://github.com/ul-mds/fable-broker) which are part of the FABLE
 (**F**ederated **A**nonymized **B**loom filter **L**inkage **E**ngine) ecosystem.
 It also contains a command-line application which uses the library to process CSV files.
 
@@ -24,13 +25,21 @@ To add them, install this package using the following command.
 pip install fable-client[faker]
 ```
 
-## Library methods
+## Library clients
 
-The library exposes functions for entity pre-processing, masking and bit vector matching.
-They follow the data model that is also used by the FABLE PPRL service, which is exposed through
-the [FABLE model package](https://github.com/ul-mds/fable-model).
+The library exposes the `PPRLClient` class for entity pre-processing, masking, bit vector matching and weight
+estimation.
+Furthermore, there is the `BrokerClient` class for handling match sessions, accepting bit vectors from different
+clients, querying matching tasks for workers in the background and providing results to these clients.
+They follow the data models that are also used by the FABLE services themselves, which are exposed through the
+[FABLE model package](https://github.com/ul-mds/fable-model).
 
-### Entity transformation
+### PPRL Client
+
+The following demonstrates the four main tasks of the `PPRLClient`: transformation, masking, matching and weight
+estimation.
+
+#### Entity transformation
 
 ```python
 import fable_client
@@ -42,22 +51,48 @@ from fable_model import (
     GlobalTransformerConfig,
     NormalizationTransformer,
 )
+import json
 
 client = fable_client.PPRLClient(base_url="http://localhost:8080")
 
 response = client.transform(
     EntityTransformRequest(
-        config=TransformConfig(empty_value=EmptyValueHandling.error),
-        entities=[AttributeValueEntity(id="001", attributes={"first_name": "Müller", "last_name": "Ludenscheidt"})],
-        global_transformers=GlobalTransformerConfig(before=[NormalizationTransformer()]),
+        config=TransformConfig(
+            empty_value=EmptyValueHandling.error,
+        ),
+        entities=[
+            AttributeValueEntity(
+                id="001",
+                attributes={"first_name": "Müller", "last_name": "Ludenscheidt"},
+            ),
+        ],
+        global_transformers=GlobalTransformerConfig(
+            before=[NormalizationTransformer()],
+        ),
     )
 )
 
-print(response.entities)
-# => [AttributeValueEntity(id='001', attributes={'first_name': 'muller', 'last_name': 'ludenscheidt'})]
+print(
+    json.dumps(
+        [entity.model_dump() for entity in response.entities],
+        indent=2,
+    )
+)
 ```
 
-### Entity masking
+```text
+[
+  {
+    "id": "001",
+    "attributes": {
+      "first_name": "muller",
+      "last_name": "ludenscheidt"
+    }
+  }
+]
+```
+
+#### Entity masking
 
 ```python
 import fable_client
@@ -71,6 +106,7 @@ from fable_model import (
     CLKFilter,
     AttributeValueEntity,
 )
+import json
 
 client = fable_client.PPRLClient(base_url="http://localhost:8080")
 
@@ -79,30 +115,55 @@ response = client.mask(
         config=MaskConfig(
             token_size=2,
             hash=HashConfig(
-                function=HashFunction(algorithms=[HashAlgorithm.sha1], key="s3cr3t_k3y"), strategy=RandomHash()
+                function=HashFunction(
+                    algorithms=[HashAlgorithm.sha1],
+                    key="s3cr3t_k3y",
+                ),
+                strategy=RandomHash(),
             ),
             filter=CLKFilter(hash_values=5, filter_size=256),
         ),
-        entities=[AttributeValueEntity(id="001", attributes={"first_name": "muller", "last_name": "ludenscheidt"})],
+        entities=[
+            AttributeValueEntity(
+                id="001",
+                attributes={"first_name": "muller", "last_name": "ludenscheidt"},
+            ),
+        ],
     )
 )
 
-print(response.entities)
-# => [BitVectorEntity(id='001', value='SKkgqBHBCJJCANICEKSpWMAUBYCQEMLuZgEQGBKRC8A=')]
+print(
+    json.dumps(
+        [entity.model_dump() for entity in response.entities],
+        indent=2,
+    )
+)
 ```
 
-### Bit vector matching
+```text
+[
+  {
+    "id": "001",
+    "value": "SKkgqBHBCJJCANICEKSpWMAUBYCQEMLuZgEQGBKRC8A="
+  }
+]
+```
+
+#### Bit vector matching
 
 ```python
 import fable_client
 from fable_model import VectorMatchRequest, MatchConfig, SimilarityMeasure, BitVectorEntity
+import json
 
 client = fable_client.PPRLClient(base_url="http://localhost:8080")
 
 response = client.match(
     VectorMatchRequest(
-        config=MatchConfig(measure=SimilarityMeasure.jaccard, threshold=0.8),
-        domain=[BitVectorEntity(id="001", value="SKkgqBHBCJJCANICEKSpWMAUBYCQEMLuZgEQGBKRC8A=")],
+        config=MatchConfig(measures=[SimilarityMeasure.jaccard], thresholds=[0.8]),
+        domain=[
+            BitVectorEntity(id="001", value="SKkgqBHBCJJCANICEKSpWMAUBYCQEMLuZgEQGBKRC8A="),
+        ],
         range=[
             BitVectorEntity(id="100", value="UKkgqBHBDJJCANICELSpWMAUBYCMEMLrZgEQGBKRC7A="),
             BitVectorEntity(id="101", value="H5DN45iUeEjrjbHZrzHb3AyQk9O4IgxcpENKKzEKRLE="),
@@ -110,11 +171,34 @@ response = client.match(
     )
 )
 
-print(response.matches)
-# => [Match(domain=BitVectorEntity(id='001', value='SKkgqBHBCJJCANICEKSpWMAUBYCQEMLuZgEQGBKRC8A='), range=BitVectorEntity(id='100', value='UKkgqBHBDJJCANICELSpWMAUBYCMEMLrZgEQGBKRC7A='), similarity=0.8536585365853658)]
+print(
+    json.dumps(
+        [match.model_dump() for match in response.matches],
+        indent=2,
+    )
+)
 ```
 
-### Attribute weight estimation
+```text
+[
+  {
+    "domain": {
+      "id": "001",
+      "value": "SKkgqBHBCJJCANICEKSpWMAUBYCQEMLuZgEQGBKRC8A="
+    },
+    "range": {
+      "id": "100",
+      "value": "UKkgqBHBDJJCANICELSpWMAUBYCMEMLrZgEQGBKRC7A="
+    },
+    "similarities": [
+      0.8536585365853658
+    ],
+    "aggregated_similarity": null
+  }
+]
+```
+
+#### Attribute weight estimation
 
 ```python
 import fable_client
@@ -126,14 +210,21 @@ from fable_model import (
     GlobalTransformerConfig,
     NormalizationTransformer,
 )
+import json
 
 client = fable_client.PPRLClient(base_url="http://localhost:8080")
 
 stats = fable_client.estimate.compute_attribute_stats(
     client,
     [
-        AttributeValueEntity(id="001", attributes={"given_name": "Max", "last_name": "Mustermann", "gender": "m"}),
-        AttributeValueEntity(id="002", attributes={"given_name": "Maria", "last_name": "Musterfrau", "gender": "f"}),
+        AttributeValueEntity(
+            id="001",
+            attributes={"given_name": "Max", "last_name": "Mustermann", "gender": "m"},
+        ),
+        AttributeValueEntity(
+            id="002",
+            attributes={"given_name": "Maria", "last_name": "Musterfrau", "gender": "f"},
+        ),
     ],
     BaseTransformRequest(
         config=TransformConfig(empty_value=EmptyValueHandling.skip),
@@ -141,8 +232,181 @@ stats = fable_client.estimate.compute_attribute_stats(
     ),
 )
 
-print(stats)
-# => {'given_name': {'average_tokens': 5.0, 'ngram_entropy': 2.9219280948873623}, 'last_name': {'average_tokens': 11.0, 'ngram_entropy': 3.913977073182751}, 'gender': {'average_tokens': 2.0, 'ngram_entropy': 2.0}}
+print(json.dumps(stats, indent=2))
+```
+
+```text
+{
+  "given_name": {
+    "average_tokens": 5.0,
+    "ngram_entropy": 2.9219280948873623
+  },
+  "last_name": {
+    "average_tokens": 11.0,
+    "ngram_entropy": 3.913977073182751
+  },
+  "gender": {
+    "average_tokens": 2.0,
+    "ngram_entropy": 2.0
+  }
+}
+```
+
+### Broker Client
+
+The following demonstrates the five main tasks of the `BrokerClient`: creating sessions, refreshing sessions, deleting
+sessions, submitting vectors from different clients and fetching matching results. For further explanation read the
+documentation of the [Broker service repository](https://github.com/ul-mds/fable-broker).
+
+#### Creating a session
+
+```python
+from datetime import datetime
+from fable_client import BrokerClient
+from fable_model import SessionCreationRequest, MatchConfig, SimilarityMeasure, SimilarityAggregator
+
+client = BrokerClient(base_url="http://localhost:8081")
+
+r = client.create_session(
+    SessionCreationRequest(
+        session="my-session-id",
+        match_config=MatchConfig(
+            measures=[SimilarityMeasure.jaccard, SimilarityMeasure.dice],
+            thresholds=[0.9],
+            aggregator=SimilarityAggregator.avg,
+        ),
+    ),
+)
+
+print(r.session)
+print(datetime.fromtimestamp(r.expires_at))
+print(r.token)
+```
+
+```text
+my-session-id
+2026-07-10 11:33:01
+7beb3d4d3527b26984b867453f24c02a
+```
+
+#### Refreshing a session
+
+```python
+from datetime import datetime
+from fable_client import BrokerClient
+from fable_model import SessionUpdateRequest
+
+client = BrokerClient(base_url="http://localhost:8081")
+
+r = client.refresh_session(
+    SessionUpdateRequest(
+        session="my-session-id",
+        token="7beb3d4d3527b26984b867453f24c02a",
+    ),
+)
+
+print(r.session)
+print(datetime.fromtimestamp(r.expires_at))
+```
+
+```text
+my-session-id
+2026-07-10 12:03:01
+```
+
+#### Deleting a session
+
+```python
+from fable_client import BrokerClient
+from fable_model import SessionDeletionRequest
+
+client = BrokerClient(base_url="http://localhost:8081")
+
+client.delete_session(
+    SessionDeletionRequest(
+        session="my-session-id",
+        token="7beb3d4d3527b26984b867453f24c02a",
+    ),
+)
+```
+
+#### Submitting vectors for different clients
+
+```python
+from fable_client import BrokerClient
+from fable_model import ClientSubmissionRequest, MetaBitVectorEntity, BitVectorMetadata
+
+client = BrokerClient(base_url="http://localhost:8081")
+
+client.submit(
+    ClientSubmissionRequest(
+        session="my-session-id",
+        client="my-client-id",
+        vectors=[
+            MetaBitVectorEntity(
+                id="001",
+                value="CE9stxXqVmVQkHiZAZfE9w==",
+                metadata=[
+                    BitVectorMetadata(
+                        name="count",
+                        value="10",
+                    ),
+                ],
+            ),
+        ],
+    ),
+)
+
+client.submit(
+    ClientSubmissionRequest(
+        session="my-session-id",
+        client="my-client-id-2",
+        vectors=[
+            MetaBitVectorEntity(
+                id="001",
+                value="DE/st1XqViVQkHiZCJfE9w==",
+                metadata=[
+                    BitVectorMetadata(
+                        name="count",
+                        value="5",
+                    ),
+                ],
+            ),
+        ],
+    ),
+)
+```
+
+#### Fetching results
+
+```python
+from fable_client import BrokerClient
+from fable_model import ClientResultRequest
+
+client = BrokerClient(base_url="http://localhost:8081")
+
+r = client.result(
+    ClientResultRequest(
+        session="my-session-id",
+        client="my-client-id",
+    ),
+)
+
+match = r.matches[0]
+
+print(match.vector.id)
+print(match.similarities)
+print(match.aggregated_similarity)
+print(match.reference_metadata)
+```
+
+```text
+True
+1
+001
+[0.90625, 0.9508196721311475]
+0.9285348360655737
+[BitVectorMetadata(name='count', value='5')]
 ```
 
 ## Command line interface
@@ -436,17 +700,18 @@ $ fable estimate faker faker.json faker-output.json
 
 ## Configuring pytest
 
-In order to run integration tests, the FABLE PPRL service is needed.
+In order to run integration tests, the FABLE PPRL and Broker services are needed.
 The first option is to spin up the service independently and direct pytest to it.
 Alternatively, pytest can start a Docker test container for the duration of the test run.
 The following table shows all available configuration options.
 These variables can be defined in `.env` or `.env.test`.
 
-| **Environment variable**          | **Description**                                                             | **Default** |
-|-----------------------------------|-----------------------------------------------------------------------------|-------------|
-| PYTEST_PPRL_BASE_URL<sup>1)</sup> | Base URL for the FABLE PPRL service                                         |             |
-| PYTEST_PPRL_SERVICE_VERSION       | Tag of the FABLE PPRL service image that will run inside the test container |             |
-| PYTEST_PRRL_SERVICE_PORT          | Port that will be exposed by the test container                             | 8080        |
+| **Environment variable**                    | **Description**                                                               | **Default** |
+|---------------------------------------------|-------------------------------------------------------------------------------|-------------|
+| PYTEST_PPRL_SERVICE_BASE_URL<sup>1)</sup>   | Base URL for the FABLE PPRL service                                           |             |
+| PYTEST_PPRL_SERVICE_VERSION                 | Tag of the FABLE PPRL service image that will run inside the test container   |             |
+| PYTEST_BROKER_SERVICE_BASE_URL<sup>1)</sup> | Base URL for the FABLE Broker service                                         |             |
+| PYTEST_BROKER_SERVICE_VERSION               | Tag of the FABLE Broker service image that will run inside the test container |             |
 
 <sup>1)</sup> If defined, pytest will not spin up a test container.
 

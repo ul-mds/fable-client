@@ -108,8 +108,8 @@ def test_match_pairwise(tmp_path_factory, base64_factory, cli_runner, pprl_clien
     # create base match request and export it
     base_match_request = BaseMatchRequest(
         config=MatchConfig(
-            measures=SimilarityMeasure.jaccard,
-            thresholds=0,
+            measures=[SimilarityMeasure.jaccard],
+            thresholds=[0],
             method=MatchMethod.pairwise,
         )
     )
@@ -172,8 +172,8 @@ def test_match_crosswise(tmp_path_factory, base64_factory, cli_runner, pprl_clie
     # create base match request and export it
     base_match_request = BaseMatchRequest(
         config=MatchConfig(
-            measures=SimilarityMeasure.jaccard,
-            thresholds=0,
+            measures=[SimilarityMeasure.jaccard],
+            thresholds=[0],
             method=MatchMethod.crosswise,
         )
     )
