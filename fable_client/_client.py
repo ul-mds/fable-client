@@ -10,6 +10,7 @@ from fable_model import (
     EntityMaskResponse,
     EntityTransformRequest,
     EntityTransformResponse,
+    ServiceBaseInformation,
     SessionCreationRequest,
     SessionCreationResponse,
     SessionDeletionRequest,
@@ -40,7 +41,7 @@ class ValidationErrorResponse(BaseModel):
 
 class FableError(httpx.HTTPError):
     def __init__(
-        self, message: str, request: httpx.Request, error: GenericErrorResponse | ValidationErrorResponse = None
+        self, message: str, request: httpx.Request, error: GenericErrorResponse | ValidationErrorResponse | None = None
     ):
         super().__init__(message)
         self._request = request
@@ -120,6 +121,13 @@ class BaseClient:
             return None
 
         return model_out.model_validate(r.json())
+
+    @property
+    def version(self) -> str:
+        r = self._client.get("")
+        r.raise_for_status()
+
+        return ServiceBaseInformation(**r.json()).version
 
 
 class PPRLClient(BaseClient):

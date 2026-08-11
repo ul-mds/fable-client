@@ -39,6 +39,20 @@ They follow the data models that are also used by the FABLE services themselves,
 The following demonstrates the four main tasks of the `PPRLClient`: transformation, masking, matching and weight
 estimation.
 
+#### Getting the version of the PPRL service
+
+```python
+from fable_client import PPRLClient
+
+client = PPRLClient(base_url="http://localhost:8080")
+
+print(client.version)
+```
+
+```text
+0.3.0
+```
+
 #### Entity transformation
 
 ```python
@@ -257,6 +271,20 @@ print(json.dumps(stats, indent=2))
 The following demonstrates the five main tasks of the `BrokerClient`: creating sessions, refreshing sessions, deleting
 sessions, submitting vectors from different clients and fetching matching results. For further explanation read the
 documentation of the [Broker service repository](https://github.com/ul-mds/fable-broker).
+
+#### Getting the version of the Broker service
+
+```python
+from fable_client import BrokerClient
+
+client = BrokerClient(base_url="http://localhost:8081")
+
+print(client.version)
+```
+
+```text
+0.9.0
+```
 
 #### Creating a session
 
@@ -709,9 +737,9 @@ These variables can be defined in `.env` or `.env.test`.
 | **Environment variable**                    | **Description**                                                               | **Default** |
 |---------------------------------------------|-------------------------------------------------------------------------------|-------------|
 | PYTEST_PPRL_SERVICE_BASE_URL<sup>1)</sup>   | Base URL for the FABLE PPRL service                                           |             |
-| PYTEST_PPRL_SERVICE_VERSION                 | Tag of the FABLE PPRL service image that will run inside the test container   |             |
+| PYTEST_PPRL_SERVICE_VERSION                 | Tag of the FABLE PPRL service image that will run inside the test container   | latest      |
 | PYTEST_BROKER_SERVICE_BASE_URL<sup>1)</sup> | Base URL for the FABLE Broker service                                         |             |
-| PYTEST_BROKER_SERVICE_VERSION               | Tag of the FABLE Broker service image that will run inside the test container |             |
+| PYTEST_BROKER_SERVICE_VERSION               | Tag of the FABLE Broker service image that will run inside the test container | latest      |
 
 <sup>1)</sup> If defined, pytest will not spin up a test container.
 

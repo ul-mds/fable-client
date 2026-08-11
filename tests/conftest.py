@@ -3,6 +3,7 @@ import os
 import uuid
 from random import Random
 
+import docker
 import httpx2 as httpx
 import pytest
 from testcontainers.core.container import DockerContainer
@@ -34,10 +35,14 @@ def pprl_base_url(network, pprl_service_use_testcontainer):
         yield os.environ["PYTEST_PPRL_SERVICE_BASE_URL"]
         return
 
-    pprl_service_tag = os.environ["PYTEST_PPRL_SERVICE_VERSION"]
+    pprl_service_tag = os.environ.get("PYTEST_PPRL_SERVICE_VERSION", "latest")
+    image = f"ghcr.io/ul-mds/fable-pprl-service:{pprl_service_tag}"
+
+    if pprl_service_tag == "latest":
+        docker.from_env().images.pull(image)
 
     container = (
-        DockerContainer(f"ghcr.io/ul-mds/fable-pprl-service:{pprl_service_tag}")
+        DockerContainer(image)
         .with_exposed_ports(8080)
         .waiting_for(LogMessageWaitStrategy("Application startup complete"))
         .with_env("ROLE", "both")
@@ -116,13 +121,17 @@ def broker_worker(
 ):
     if broker_service_use_testcontainer:
         network_alias = "broker-worker"
-        broker_service_tag = os.environ["PYTEST_BROKER_SERVICE_VERSION"]
+        broker_service_tag = os.environ.get("PYTEST_BROKER_SERVICE_VERSION", "latest")
+        image = f"ghcr.io/ul-mds/fable-broker:{broker_service_tag}"
 
         if pprl_service_use_testcontainer:
             pprl_base_url = "http://matcher:8080"
 
+        if broker_service_tag == "latest":
+            docker.from_env().images.pull(image)
+
         container = (
-            DockerContainer(f"ghcr.io/ul-mds/fable-broker:{broker_service_tag}")
+            DockerContainer(image)
             .with_command(["celery", "-A", "fable_broker.worker.celery", "worker", "--loglevel", "INFO"])
             .with_network(network)
             .with_network_aliases(network_alias)
@@ -153,13 +162,17 @@ def broker_base_url(
         yield os.environ["PYTEST_BROKER_SERVICE_BASE_URL"]
         return
 
-    broker_service_tag = os.environ["PYTEST_BROKER_SERVICE_VERSION"]
+    broker_service_tag = os.environ.get("PYTEST_BROKER_SERVICE_VERSION", "latest")
+    image = f"ghcr.io/ul-mds/fable-broker:{broker_service_tag}"
 
     if pprl_service_use_testcontainer:
         pprl_base_url = "http://matcher:8080"
 
+    if broker_service_tag == "latest":
+        docker.from_env().images.pull(image)
+
     container = (
-        DockerContainer(f"ghcr.io/ul-mds/fable-broker:{broker_service_tag}")
+        DockerContainer(image)
         .with_command(
             [
                 "uvicorn",

@@ -1,5 +1,6 @@
 import time
 
+import httpx2
 import pytest
 from fable_model import (
     ClientResultRequest,
@@ -97,3 +98,7 @@ def test_get_result(broker_client, session, clients):
         assert r.finished
 
     assert_eventually(_wait_for_matching_to_finish)
+
+
+def test_version(broker_base_url, broker_client):
+    assert broker_client.version == httpx2.get(broker_base_url).json()["version"]
