@@ -100,3 +100,7 @@ def test_mask(pprl_client, uuid4_factory, faker):
 
 def test_version(pprl_base_url, pprl_client):
     assert pprl_client.version == httpx2.get(pprl_base_url).json()["version"]
+
+
+def test_healthiness(pprl_client):
+    assert pprl_client.is_healthy

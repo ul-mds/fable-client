@@ -1,7 +1,8 @@
 import httpx2 as httpx
 
 from fable_client import FableError
-from fable_client._client import GenericErrorResponse, ValidationErrorResponse, new_error_from_response
+from fable_client._client import BaseClient, GenericErrorResponse, ValidationErrorResponse, new_error_from_response
+from tests.helpers import next_random_string
 
 
 def test_validation_error():
@@ -32,3 +33,9 @@ def test_generic_error():
     assert isinstance(error.error_response, GenericErrorResponse)
     assert "fake internal server error" in str(error)
     assert error.error_type == "default"
+
+
+def test_unhealthy_if_unavailable():
+    client = BaseClient(base_url=f"http://{next_random_string()}")
+
+    assert not client.is_healthy

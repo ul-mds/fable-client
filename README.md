@@ -39,6 +39,20 @@ They follow the data models that are also used by the FABLE services themselves,
 The following demonstrates the four main tasks of the `PPRLClient`: transformation, masking, matching and weight
 estimation.
 
+#### Checking the healthiness of the PPRL service
+
+```python
+from fable_client import PPRLClient
+
+client = PPRLClient(base_url="http://localhost:8080")
+
+print(client.is_healthy)
+```
+
+```text
+True
+```
+
 #### Getting the version of the PPRL service
 
 ```python
@@ -271,6 +285,20 @@ print(json.dumps(stats, indent=2))
 The following demonstrates the five main tasks of the `BrokerClient`: creating sessions, refreshing sessions, deleting
 sessions, submitting vectors from different clients and fetching matching results. For further explanation read the
 documentation of the [Broker service repository](https://github.com/ul-mds/fable-broker).
+
+#### Checking the healthiness of the Broker service
+
+```python
+from fable_client import BrokerClient
+
+client = BrokerClient(base_url="http://localhost:8081")
+
+print(client.is_healthy)
+```
+
+```text
+True
+```
 
 #### Getting the version of the Broker service
 

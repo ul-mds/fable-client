@@ -102,3 +102,7 @@ def test_get_result(broker_client, session, clients):
 
 def test_version(broker_base_url, broker_client):
     assert broker_client.version == httpx2.get(broker_base_url).json()["version"]
+
+
+def test_healthiness(broker_client):
+    assert broker_client.is_healthy

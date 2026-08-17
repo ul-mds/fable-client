@@ -10,6 +10,7 @@ from fable_model import (
     EntityMaskResponse,
     EntityTransformRequest,
     EntityTransformResponse,
+    HealthResponse,
     ServiceBaseInformation,
     SessionCreationRequest,
     SessionCreationResponse,
@@ -123,6 +124,22 @@ class BaseClient:
         return model_out.model_validate(r.json())
 
     @property
+    def health_endpoint(self) -> str:
+        return "health"
+
+    @property
+    def is_healthy(self) -> bool:
+        try:
+            r = self._client.get(self.health_endpoint)
+        except httpx.HTTPError:
+            return False
+        try:
+            HealthResponse(**r.json())
+        except ValidationError:
+            return False
+        return r.status_code == httpx.codes.OK
+
+    @property
     def version(self) -> str:
         r = self._client.get("")
         r.raise_for_status()
@@ -131,6 +148,10 @@ class BaseClient:
 
 
 class PPRLClient(BaseClient):
+    @property
+    def health_endpoint(self) -> str:
+        return "healthz"
+
     def match(self, request: VectorMatchRequest) -> VectorMatchResponse:
         return self._request("match", request, VectorMatchResponse)
 
