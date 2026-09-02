@@ -15,6 +15,7 @@ from fable_model import (
     SessionCreationRequest,
     SessionCreationResponse,
     SessionDeletionRequest,
+    SessionGetResponse,
     SessionUpdateRequest,
     SessionUpdateResponse,
     VectorMatchRequest,
@@ -89,7 +90,7 @@ class BaseClient:
     def _request(
         self,
         path: str,
-        model_in: _MI,
+        model_in: _MI | None,
         model_out: type[_MO],
         method: Literal["POST", "GET", "PUT", "DELETE", "PATCH"] = "POST",
         expected_code: int = httpx.codes.OK,
@@ -99,7 +100,7 @@ class BaseClient:
     def _request(
         self,
         path: str,
-        model_in: _MI,
+        model_in: _MI | None,
         model_out: None,
         method: Literal["POST", "GET", "PUT", "DELETE", "PATCH"] = "POST",
         expected_code: int = httpx.codes.OK,
@@ -108,12 +109,15 @@ class BaseClient:
     def _request(
         self,
         path: str,
-        model_in: _MI,
+        model_in: _MI | None,
         model_out: type[_MO] | None,
         method: Literal["POST", "GET", "PUT", "DELETE", "PATCH"] = "POST",
         expected_code: int = httpx.codes.OK,
     ) -> _MO | None:
-        r = self._client.request(method, path, json=model_in.model_dump(mode="json"))
+        if model_in is not None:
+            r = self._client.request(method, path, json=model_in.model_dump(mode="json"))
+        else:
+            r = self._client.request(method, path)
 
         if r.status_code != expected_code:
             raise new_error_from_response(r)
@@ -165,6 +169,9 @@ class PPRLClient(BaseClient):
 class BrokerClient(BaseClient):
     def create_session(self, request: SessionCreationRequest) -> SessionCreationResponse:
         return self._request("session", request, SessionCreationResponse, expected_code=httpx.codes.CREATED)
+
+    def get_session(self, session: str) -> SessionGetResponse:
+        return self._request(f"session/{session}", None, SessionGetResponse, method="GET")
 
     def delete_session(self, request: SessionDeletionRequest) -> None:
         return self._request("session", request, None, method="DELETE", expected_code=httpx.codes.ACCEPTED)

@@ -100,6 +100,21 @@ def test_get_result(broker_client, session, clients):
     assert_eventually(_wait_for_matching_to_finish)
 
 
+def test_get_session(broker_client, session):
+    r = broker_client.get_session(session.session.get_secret_value())
+
+    # This is the same config as defined in the session fixture.
+    config = MatchConfig(
+        measures=[SimilarityMeasure.cosine, SimilarityMeasure.jaccard],
+        thresholds=[0.9],
+        aggregator=SimilarityAggregator.avg,
+    )
+
+    assert r.session == session.session
+    assert r.expires_at == session.expires_at
+    assert r.match_config == config
+
+
 def test_version(broker_base_url, broker_client):
     assert broker_client.version == httpx2.get(broker_base_url).json()["version"]
 

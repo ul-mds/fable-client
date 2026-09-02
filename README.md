@@ -334,9 +334,9 @@ r = client.create_session(
     ),
 )
 
-print(r.session)
+print(r.session.get_secret_value())
 print(datetime.fromtimestamp(r.expires_at))
-print(r.token)
+print(r.token.get_secret_value())
 ```
 
 ```text
@@ -361,13 +361,45 @@ r = client.refresh_session(
     ),
 )
 
-print(r.session)
+print(r.session.get_secret_value())
 print(datetime.fromtimestamp(r.expires_at))
 ```
 
 ```text
 my-session-id
 2026-07-10 12:03:01
+```
+
+#### Getting session info
+
+```python
+from datetime import datetime
+from fable_client import BrokerClient
+
+client = BrokerClient(base_url="http://localhost:8081")
+
+r = client.get_session(session="my-session-id")
+
+print(r.session.get_secret_value())
+print(datetime.fromtimestamp(r.expires_at))
+print(r.match_config.model_dump_json(indent=2))
+```
+
+```text
+my-session-id
+2026-07-10 12:03:01
+{
+  "measures": [
+    "jaccard",
+    "dice"
+  ],
+  "thresholds": [
+    0.9
+  ],
+  "aggregator": "avg",
+  "aggregator_args": {},
+  "method": "crosswise"
+}
 ```
 
 #### Deleting a session
