@@ -33,7 +33,7 @@ def session(broker_client):
         ),
     )
 
-    assert r.session == session_name
+    assert r.session.get_secret_value() == session_name
 
     yield r
 

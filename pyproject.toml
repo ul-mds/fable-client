@@ -1,6 +1,6 @@
 [project]
 name = "fable-client"
-version = "0.9.0"
+version = "0.9.1"
 description = "HTTP-based client for interacting with the FABLE services for privacy-preserving record linkage with Bloom filters."
 authors = [
     {name = "Maximilian Jugl"},
@@ -11,7 +11,7 @@ requires-python = ">=3.11,<4"
 dependencies = [
     "click (>=8.0.0,<9.0.0)",
     "fable-core (>=0.2.0,<0.3.0)",
-    "fable-model (>=0.3.0,<0.4.0)",
+    "fable-model (>=0.4.0,<1.0.0)",
     "httpx2 (>=2.9.1,<3.0.0)",
 ]
 license = "MIT"
