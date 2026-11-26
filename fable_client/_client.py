@@ -43,10 +43,15 @@ class ValidationErrorResponse(BaseModel):
 
 class FableError(httpx.HTTPError):
     def __init__(
-        self, message: str, request: httpx.Request, error: GenericErrorResponse | ValidationErrorResponse | None = None
+        self,
+        message: str,
+        request: httpx.Request,
+        status_code: int,
+        error: GenericErrorResponse | ValidationErrorResponse | None = None,
     ):
         super().__init__(message)
-        self._request = request
+        self.request = request
+        self.status_code = status_code
         self.error_response = error
 
         self.error_type = "unknown"
@@ -76,7 +81,7 @@ def new_error_from_response(r: httpx.Response):
         except (ValidationError, JSONDecodeError):
             pass
 
-    return FableError(error_message, r.request, error_response)
+    return FableError(error_message, r.request, r.status_code, error_response)
 
 
 class BaseClient:
